@@ -66,7 +66,7 @@ if (is_dir("/usr/local/pkg/priv")) {
 	$dir_array = get_priv_files("/usr/local/pkg/priv");
 	foreach ($dir_array as $file) {
 		if (!is_dir("/usr/local/pkg/priv/{$file}") &&
-		    substr($file, -4) == ".inc") {
+			substr($file, -4) == ".inc") {
 			include_once("/usr/local/pkg/priv/{$file}");
 		}
 	}
@@ -217,8 +217,8 @@ function getPrivPages(& $entry, & $allowed_pages) {
 
 	foreach ($entry['priv'] as $pname) {
 		if (strncmp($pname, "page-", 5) ||
-		    !is_array($priv_list[$pname]) ||
-		    !is_array($priv_list[$pname]['match'])) {
+			!is_array($priv_list[$pname]) ||
+			!is_array($priv_list[$pname]['match'])) {
 			continue;
 		}
 		foreach ($priv_list[$pname]['match'] as $match) {
@@ -249,7 +249,7 @@ function getAllowedPages($username, &$attributes = array()) {
 		// obtain ldap groups if we are in ldap mode
 		if ($authcfg['type'] == "ldap") {
 			if (isset($_SESSION["ldap_allowed_groups"]) &&
-			    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+				(time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
 				$allowed_groups = $_SESSION["ldap_allowed_groups"];
 			} else {
 				$allowed_groups = @ldap_get_groups($username, $authcfg);
@@ -258,7 +258,7 @@ function getAllowedPages($username, &$attributes = array()) {
 			}
 		} elseif ($authcfg['type'] == "radius") {
 			if (isset($_SESSION["radius_allowed_groups"]) &&
-			    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+				(time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
 				$allowed_groups = $_SESSION["radius_allowed_groups"];
 			} else {
 				$allowed_groups = @radius_get_groups($attributes);

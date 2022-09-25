@@ -185,7 +185,7 @@ function gui_parse_single_na_lease($val, $lang_pack, $ndpdata, &$mappings, &$ent
 		$space_result = parse_all_ipv6_to_array($val['ADDRESS']);
 
 		if (count($space_result) == 1) {
-	    		if (setnlen($space_result[0], 'MATCH')) {
+				if (setnlen($space_result[0], 'MATCH')) {
 				general_debug("We have a valid ipv6 address");
 				if (check_n_set($entry, 'ip', $space_result[0]['MATCH'], true)) {
 					// In general we trust that $lang_pack exists with values so no checking (either
@@ -200,8 +200,8 @@ function gui_parse_single_na_lease($val, $lang_pack, $ndpdata, &$mappings, &$ent
 					if (setnlen($entry, 'duid') && setnlen($entry, 'iaid')) {
 						// We assume $mappings array exist - else nothing works.
 						general_debug('Setting the mappings array for DUID ' . $entry['duid'] .
-							      ' with IAID ' . $entry['iaid'] . ' as index with value ' .
-							      $entry['ip']);
+								  ' with IAID ' . $entry['iaid'] . ' as index with value ' .
+								  $entry['ip']);
 						check_n_set($mappings[$entry['duid']], $entry['iaid'], $entry['ip'], true);
 					} else {
 						general_debug('WARNING: DUID or IAID is missing in entry. Likely either has zero length content.');
@@ -227,7 +227,7 @@ function gui_parse_single_pd_lease($val, $lang_pack, &$entry) {
 				general_debug("We have a valid ipv6 address");
 
 				if (setnlen($space_result[0], 'CMR6') &&
-				    preg_match('/::$/', $space_result[0]['CMR6'])) {
+					preg_match('/::$/', $space_result[0]['CMR6'])) {
 					general_debug("that is properly terminated with ::");
 				} else {
 					general_debug(", but not a proper subnet that ends with ::");
@@ -279,7 +279,7 @@ function gui_handle_ia($content, &$entry, $lang_pack) {
 					break;
 				default:
 					general_debug('Notice: Binding state "' . $ia_val['BINDINGSTATE'] .
-						      '" is not handled.');
+							  '" is not handled.');
 					break;
 			}
 
@@ -311,10 +311,10 @@ function gui_parse_single_failover($content, &$entry) {
 	foreach ($matches as $val) {
 		check_value_set_entry($val, 'MYSTATE', $entry, 'mystate', true);
 		check_value_set_entry($val, 'MYDATE', $entry, 'mydate', true,
-				      function () use (&$val) {return $val['DATE'] . ' ' . $val['TIME'];});
+					  function () use (&$val) {return $val['DATE'] . ' ' . $val['TIME'];});
 		check_value_set_entry($val, 'PEERSTATE', $entry, 'peerstate', true);
 		check_value_set_entry($val, 'PEERDATE', $entry, 'peerdate', true,
-				      function () use (&$val) {return $val['PDATE'] . ' ' . $val['PTIME'];});
+					  function () use (&$val) {return $val['PDATE'] . ' ' . $val['PTIME'];});
 		/* Does not seem to be used by lease gui so we do not set anything; we just debug.
 		 * mclt (Maximum Client Lead Time):
 		 * https://kb.isc.org/article/AA-00502/0/A-Basic-Guide-to-Configuring-DHCP-Failover.html
@@ -348,8 +348,8 @@ function gui_parse_single_failover($content, &$entry) {
  *	 octal values):
  *	 [\x20\x21\x23-\x5B\x5D-\x7E]
  *	 1. See ascii table that includes hex values:
- *	    https://en.wikipedia.org/wiki/ASCII#Printable_characters
- *	    https://en.wikipedia.org/wiki/ASCII#Character_set
+ *		https://en.wikipedia.org/wiki/ASCII#Printable_characters
+ *		https://en.wikipedia.org/wiki/ASCII#Character_set
  *	 2. Check: https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c
  *	 3. isprint is more limited than isascii: http://www.cplusplus.com/reference/cctype/isprint/
  */
@@ -400,11 +400,11 @@ BASE;
  * space, but at different places before the substitutions some of the white
  * space characters were as mentioned below and their purpose:
  * *  (star) needed for when no space or newline e.g. nested {} is used in e.g.:
- *    something {dww w{} w {d;}}
+ *	something {dww w{} w {d;}}
  * \n (new line) needed for quicker matching (here)
  * \  (space) needed so we eat all space before a faulty double {}:
- *    something {} {}
- *    , is repeated - which we consider illegal.
+ *	something {} {}
+ *	, is repeated - which we consider illegal.
  * \ \n has been substituted with \s to cover more white space characters!
  */
 
@@ -418,7 +418,7 @@ BASE;
  * https://source.isc.org/cgi-bin/gitweb.cgi?p=dhcp.git;a=blob;f=common/print.c
  * const char * print_time(TIME t) last else clause:
  * if (strftime(buf, sizeof(buf), "%w %Y/%m/%d %H:%M:%S;",
- *                              gmtime(&t)) == 0)
+ *							  gmtime(&t)) == 0)
  */
 const date_time = <<<'DATETIME'
 	(?'WEEKDAY'[0-6])\s+

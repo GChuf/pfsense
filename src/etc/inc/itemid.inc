@@ -114,7 +114,7 @@ function get_id($id, $array) {
 	foreach ($array as $key => $item) {
 		// If this item is the one we want to delete
 		if (isset($item['associated-rule-id']) &&
-		    $item['associated-rule-id'] == $id) {
+			$item['associated-rule-id'] == $id) {
 			return $key;
 		}
 	}

@@ -77,10 +77,10 @@ $pushover_sounds = array(
 function file_notice($id, $notice, $category = "General", $url = "", $priority = 1, $local_only = false) {
 	/*
 	 * $category - Category that this notice should be displayed under. This can be arbitrary,
-	 * 	       but a page must be set to receive this messages for it to be displayed.
+	 * 		   but a page must be set to receive this messages for it to be displayed.
 	 *
 	 * $priority - A notice's priority. Higher numbers indicate greater severity.
-	 *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
+	 *		   0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
 	 */
 	global $notice_path;
 	if (!$queue = get_notices()) {
@@ -369,34 +369,34 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	$to = $config['notifications']['smtp']['notifyemailaddress'];
 
 	if (empty($config['notifications']['smtp']['username']) ||
-	    empty($config['notifications']['smtp']['password'])) {
+		empty($config['notifications']['smtp']['password'])) {
 		$auth = false;
 		$username = '';
 		$password = '';
 	} else {
 		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
-		    ? $config['notifications']['smtp']['authentication_mechanism']
-		    : 'PLAIN';
+			? $config['notifications']['smtp']['authentication_mechanism']
+			: 'PLAIN';
 		$username = $config['notifications']['smtp']['username'];
 		$password = $config['notifications']['smtp']['password'];
 	}
 
 	$params = array(
 		'host' => (isset($config['notifications']['smtp']['ssl'])
-		    ? 'ssl://'
-		    : '')
-		    . $config['notifications']['smtp']['ipaddress'],
+			? 'ssl://'
+			: '')
+			. $config['notifications']['smtp']['ipaddress'],
 		'port' => empty($config['notifications']['smtp']['port'])
-		    ? 25
-		    : $config['notifications']['smtp']['port'],
+			? 25
+			: $config['notifications']['smtp']['port'],
 		'auth' => $auth,
 		'username' => $username,
 		'password' => $password,
 		'localhost' => $config['system']['hostname'] . "." .
-		    $config['system']['domain'],
+			$config['system']['domain'],
 		'timeout' => !empty($config['notifications']['smtp']['timeout'])
-		    ? $config['notifications']['smtp']['timeout']
-		    : 20,
+			? $config['notifications']['smtp']['timeout']
+			: 20,
 		'debug' => false,
 		'persist' => false
 	);
@@ -416,10 +416,10 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 	}
 
 	$headers = array(
-		"From"    => $from,
-		"To"      => $to,
-		"Subject" => $subject,
-		"Date"    => date("r")
+		"From" 		=> $from,
+		"To"		=> $to,
+		"Subject"	=> $subject,
+		"Date"		=> date("r")
 	);
 
 	$error_text = 'Could not send the message to %1$s -- Error: %2$s';
@@ -429,7 +429,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 
 		if (PEAR::isError($mail)) {
 			$err_msg = sprintf(gettext($error_text),
-			    $to, $mail->getMessage());
+				$to, $mail->getMessage());
 		}
 	} catch (Exception $e) {
 		$err_msg = sprintf(gettext($error_text), $to, $e->getMessage());
@@ -455,8 +455,8 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 function notify_via_telegram($message, $force = false) {
 	global $config;
 	if ((!isset($config['notifications']['telegram']['enabled']) && (!$force))
-	    || !$config['notifications']['telegram']['api']
-	    || !$config['notifications']['telegram']['chatid']) {
+		|| !$config['notifications']['telegram']['api']
+		|| !$config['notifications']['telegram']['chatid']) {
 		if ($force) {
 			return gettext("Unable to test Telegram notification without both API Key & Chat ID set");
 		}
@@ -495,8 +495,8 @@ function notify_via_telegram($message, $force = false) {
 function notify_via_pushover($message, $force = false) {
 	global $config;
 	if ((!isset($config['notifications']['pushover']['enabled']) && (!$force))
-	    || !$config['notifications']['pushover']['apikey']
-	    || !$config['notifications']['pushover']['userkey']) {
+		|| !$config['notifications']['pushover']['apikey']
+		|| !$config['notifications']['pushover']['userkey']) {
 		if ($force) {
 			return gettext("Unable to test Pushover notification without both API Key & User Key set");
 		}
@@ -543,8 +543,8 @@ function notify_via_pushover($message, $force = false) {
 function notify_via_slack($message, $force = false) {
 	global $config;
 	if ((!isset($config['notifications']['slack']['enabled']) && (!$force))
-	    || !$config['notifications']['slack']['api']
-	    || !$config['notifications']['slack']['channel']) {
+		|| !$config['notifications']['slack']['api']
+		|| !$config['notifications']['slack']['channel']) {
 		if ($force) {
 			return gettext("Unable to test Slack notification without both API Key & Channel set");
 		}

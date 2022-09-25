@@ -166,7 +166,7 @@ function get_css_files() {
 		foreach ($cssfiles as $css) {
 			// Don't display any login/logo page related CSS files
 			if (strpos($css, "login") == 0 &&
-			    strpos($css, "logo") == 0) {
+				strpos($css, "logo") == 0) {
 				if (strpos($css, "BETA") != 0) {
 					array_push($betacss, $css);
 				} else if (strpos($css, "pfSense") != 0) {
@@ -526,7 +526,7 @@ function hardware_offloading_applyflags($iface) {
 	/* disable hardware checksum offloading for VirtIO network drivers,
 	 * see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=165059 */
 	if (isset($config['system']['disablechecksumoffloading']) ||
-	    stristr($iface, "vtnet") || stristr($iface, "ena")) { 
+		stristr($iface, "vtnet") || stristr($iface, "ena")) { 
 		if (isset($options['encaps']['txcsum'])) {
 			$flags_off |= IFCAP_TXCSUM;
 		}
@@ -850,7 +850,7 @@ function reverse_strrchr($haystack, $needle) {
 
 /*
  *  backup_config_section($section): returns as an xml file string of
- *                                   the configuration section
+ *								   the configuration section
  */
 function backup_config_section($section_name) {
 	global $config;
@@ -863,8 +863,8 @@ function backup_config_section($section_name) {
 
 /*
  *  restore_config_section($section_name, new_contents): restore a configuration section,
- *                                                  and write the configuration out
- *                                                  to disk/cf.
+ *												  and write the configuration out
+ *												  to disk/cf.
  */
 function restore_config_section($section_name, $new_contents) {
 	global $config, $g;
@@ -890,7 +890,7 @@ function restore_config_section($section_name, $new_contents) {
 	/* Save current pkg repo to re-add on new config */
 	unset($pkg_repo_conf_path);
 	if ($section_name == "system" &&
-	    isset($config['system']['pkg_repo_conf_path'])) {
+		isset($config['system']['pkg_repo_conf_path'])) {
 		$pkg_repo_conf_path = $config['system']['pkg_repo_conf_path'];
 	}
 
@@ -903,7 +903,7 @@ function restore_config_section($section_name, $new_contents) {
 	if ($section_name == "system") {
 		if (isset($pkg_repo_conf_path)) {
 			$config['system']['pkg_repo_conf_path'] =
-			    $pkg_repo_conf_path;
+				$pkg_repo_conf_path;
 		} elseif (isset($config['system']['pkg_repo_conf_path'])) {
 			unset($config['system']['pkg_repo_conf_path']);
 		}
@@ -916,8 +916,8 @@ function restore_config_section($section_name, $new_contents) {
 
 /*
  *  merge_config_section($section_name, new_contents):   restore a configuration section,
- *                                                  and write the configuration out
- *                                                  to disk/cf.  But preserve the prior
+ *												  and write the configuration out
+ *												  to disk/cf.  But preserve the prior
  * 													structure if needed
  */
 function merge_config_section($section_name, $new_contents) {
@@ -976,7 +976,7 @@ function host_firmware_version($tocheck = "") {
 	return array(
 		"firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $os_version),
-		"base"     => array("version" => $os_version),
+		"base"	 => array("version" => $os_version),
 		"platform" => $g['product_label'],
 		"config_version" => $config['version']
 	);
@@ -1133,15 +1133,15 @@ function load_loader_conf($loader_conf = NULL, $local = false) {
 	/* These values should be removed from loader.conf and loader.conf.local
 	 * As they will be replaced when necessary. */
 	$remove = array("hw.usb.no_pf", "hint.mdio.0.at", "hint.e6000sw.0",
-	    "hw.e6000sw.default_disabled", "vm.pmap.pti",
-	    "net.pf.request_maxcount", "hw.hn.vf_transparent",
-	    "hw.hn.use_if_start", "net.link.ifqmaxlen");
+		"hw.e6000sw.default_disabled", "vm.pmap.pti",
+		"net.pf.request_maxcount", "hw.hn.vf_transparent",
+		"hw.hn.use_if_start", "net.link.ifqmaxlen");
 	if (!$local) {
 		/* These values should only be filtered in loader.conf, not .local */
 		$remove = array_merge($remove,
-		    array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
-		    "boot_multicons", "boot_serial", "hint.uart.0.flags",
-		    "hint.uart.1.flags"));
+			array("autoboot_delay", "console", "comconsole_speed", "comconsole_port",
+			"boot_multicons", "boot_serial", "hint.uart.0.flags",
+			"hint.uart.1.flags"));
 	}
 	foreach ($input_split as $line) {
 		if (empty($line)) {
@@ -1180,9 +1180,9 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	} elseif ($specific_platform['name'] == 'Turbot Dual-E') {
 		$g['primaryconsole_force'] = "video";
 	} elseif ($specific_platform['name'] == 'RCC-VE' ||
-	    $specific_platform['name'] == 'RCC' ||
-	    $specific_platform['name'] == 'SG-2220' ||
-	    $specific_platform['name'] == 'apu2') {
+		$specific_platform['name'] == 'RCC' ||
+		$specific_platform['name'] == 'SG-2220' ||
+		$specific_platform['name'] == 'apu2') {
 		$serial_only = true;
 	}
 
@@ -1197,7 +1197,7 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	foreach ($boot_config_split as $bcs) {
 		/* Ignore -D and -h lines now */
 		if (!empty($bcs) && !stristr($bcs, "-D") &&
-		    !stristr($bcs, "-h")) {
+			!stristr($bcs, "-h")) {
 			$data[] = $bcs;
 		}
 	}
@@ -1230,8 +1230,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 		$data[] = 'boot_multicons="YES"';
 		$data[] = 'boot_serial="YES"';
 		$primaryconsole = isset($g['primaryconsole_force']) ?
-		    $g['primaryconsole_force'] :
-		    $config['system']['primaryconsole'];
+			$g['primaryconsole_force'] :
+			$config['system']['primaryconsole'];
 		switch ($primaryconsole) {
 			case "video":
 				$data[] = "console=\"{$video_console_type},comconsole\"";
@@ -1244,8 +1244,8 @@ function setup_loader_settings($path = "", $upgrade = false) {
 	}
 
 	if ($specific_platform['name'] == 'RCC-VE' ||
-	    $specific_platform['name'] == 'RCC' ||
-	    $specific_platform['name'] == 'SG-2220') {
+		$specific_platform['name'] == 'RCC' ||
+		$specific_platform['name'] == 'SG-2220') {
 		$data[] = 'comconsole_port="0x2F8"';
 		$data[] = 'hint.uart.0.flags="0x00"';
 		$data[] = 'hint.uart.1.flags="0x10"';
@@ -1301,9 +1301,9 @@ function console_configure($when = "save", $path = "") {
 
 	$console_line = "console\tnone\t\t\t\tunknown\toff\tsecure";
 	$virt_line =
-	    "\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
+		"\"/usr/libexec/getty {$console_type}\"\txterm\tonifexists secure";
 	$ttyu_line =
-	    "\"/usr/libexec/getty {$serial_type}\"\tvt100\t{$on_off}\tsecure";
+		"\"/usr/libexec/getty {$serial_type}\"\tvt100\t{$on_off}\tsecure";
 
 	$found = array();
 
@@ -1373,7 +1373,7 @@ function is_serial_enabled() {
 	global $g, $config;
 
 	if (!isset($g['enableserial_force']) &&
-	    !isset($config['system']['enableserial'])) {
+		!isset($config['system']['enableserial'])) {
 		return false;
 	}
 
@@ -2063,8 +2063,8 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 		return false;
 	}
 	/*
-	 *      Originally by Author: Keyvan Minoukadeh
-	 *      Modified by Scott Ullrich to return Content-Length size
+	 *	  Originally by Author: Keyvan Minoukadeh
+	 *	  Modified by Scott Ullrich to return Content-Length size
 	 */
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -2322,7 +2322,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	/*
 	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
 	 * $type = if set to 'url' then subnets and ips will be returned,
-	 *         if set to 'url_ports' port-ranges and ports will be returned
+	 *		 if set to 'url_ports' port-ranges and ports will be returned
 	 * $max_items = sets the maximum amount of valid items to load, -1 the default defines there is no limit.
 	 *
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
@@ -2632,8 +2632,8 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 	// If the file doesn't exist or is older than update_freq days, fetch a new copy.
 	if (!file_exists($urltable_filename) || (filesize($urltable_filename) == "0") ||
-	    ((time() - filemtime($urltable_filename)) > ($freq * 86400 - 90)) ||
-	    $forceupdate) {
+		((time() - filemtime($urltable_filename)) > ($freq * 86400 - 90)) ||
+		$forceupdate) {
 
 		// Try to fetch the URL supplied
 		unlink_if_exists($tmp_urltable_filename);
@@ -2948,8 +2948,8 @@ function load_mac_manufacturer_table() {
  *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified,
- *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
+ *	 If check_subnets is true and cidrprefix is specified,
+ *	 then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   returns true if the IP Address is configured and present on this device or overlaps a configured subnet.
 */
@@ -2969,8 +2969,8 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
- *     If check_subnets is true and cidrprefix is specified,
- *     then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
+ *	 If check_subnets is true and cidrprefix is specified,
+ *	 then check if the ipaddr/cidrprefix subnet overlaps the subnet of any other configured IP address
  * RESULT
  *   Returns an array of the interfaces 'if' plus IP address or subnet 'ip_or_subnet' that match or overlap the IP address to check.
  *   If there are no matches then an empty array is returned.
@@ -3018,8 +3018,8 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 				/* do not check subnet overlapping on 6rd interfaces,
 				 * see https://redmine.pfsense.org/issues/12371 */ 
 				if ($if_ipv6 && $if_snbitsv6 &&
-				    (($config['interfaces'][$if]['ipaddrv6'] != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
-				    check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
+					(($config['interfaces'][$if]['ipaddrv6'] != '6rd') || ($cidrprefix > $if_snbitsv6)) &&
+					check_subnetsv6_overlap($ipaddr, $cidrprefix, $if_ipv6, $if_snbitsv6)) {
 					$where_entry = array();
 					$where_entry['if'] = $if;
 					$where_entry['ip_or_subnet'] = get_interface_ipv6($if) . "/" . get_interface_subnetv6($if);
@@ -3218,12 +3218,12 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 
 	/*
 	 * xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx
-	 *                ^^^^ ^
-	 *                |||| \-> 64
-	 *                |||\---> 63, 62, 61, 60
-	 *                ||\----> 56
-	 *                |\-----> 52
-	 *                \------> 48
+	 *				^^^^ ^
+	 *				|||| \-> 64
+	 *				|||\---> 63, 62, 61, 60
+	 *				||\----> 56
+	 *				|\-----> 52
+	 *				\------> 48
 	 */
 
 	switch ($len) {
@@ -3258,7 +3258,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 	}
 
 	return text_to_compressed_ip6(substr($prefix, 0, $prefix_len) .
-	    substr($suffix, $prefix_len));
+		substr($suffix, $prefix_len));
 }
 
 function dhcpv6_pd_str_help($pdlen) {
@@ -3510,14 +3510,14 @@ function &getarraybyref(&$array) {
  * NAME
  *   send_download_data - Send content to a user's browser as a file to download
  * INPUTS
- *   $type        : The type of download, either 'data' to send the contents of
- *                    a variable or 'file' to send the contents of a file on the
- *                    filesystem.
- *   $content     : For 'data' type, the content to send the user. For 'file'
- *                    type, the full path to the file to send.
+ *   $type		: The type of download, either 'data' to send the contents of
+ *					a variable or 'file' to send the contents of a file on the
+ *					filesystem.
+ *   $content	 : For 'data' type, the content to send the user. For 'file'
+ *					type, the full path to the file to send.
  *   $userfilename: The filename presented to the user when downloading. For
- *                    'file' type, this may be omitted and the basename of
- *                    $content will be used instead.
+ *					'file' type, this may be omitted and the basename of
+ *					$content will be used instead.
  *   $contenttype : MIME content type of the data. Default "application/octet-stream"
  * RESULT
  *   Sends the data to the browser as a file to download.

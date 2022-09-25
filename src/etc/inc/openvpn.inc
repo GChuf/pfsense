@@ -417,7 +417,7 @@ function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 	}
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		$ovpn_settings = array_merge($ovpn_settings,
-		    $config['openvpn']['openvpn-client']);
+			$config['openvpn']['openvpn-client']);
 	}
 
 	foreach ($ovpn_settings as $settings) {
@@ -431,17 +431,17 @@ function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 
 		/* (TCP|UDP)(4|6) does not conflict unless interface is any */
 		if (($interface != "any" && $settings['interface'] != "any") &&
-		    (strlen($prot) == 4) &&
-		    (strlen($settings['protocol']) == 4) &&
-		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
-		    substr($prot,3,1) != substr($settings['protocol'],3,1)) {
+			(strlen($prot) == 4) &&
+			(strlen($settings['protocol']) == 4) &&
+			substr($prot,0,3) == substr($settings['protocol'],0,3) &&
+			substr($prot,3,1) != substr($settings['protocol'],3,1)) {
 			continue;
 		}
 
 		if ($port == $settings['local_port'] &&
-		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
-		    ($interface == $settings['interface'] ||
-		    $interface == "any" || $settings['interface'] == "any")) {
+			substr($prot,0,3) == substr($settings['protocol'],0,3) &&
+			($interface == $settings['interface'] ||
+			$interface == "any" || $settings['interface'] == "any")) {
 			return $settings['vpnid'];
 		}
 	}
@@ -701,14 +701,14 @@ function openvpn_validate_tunnel_network($value, $ipproto) {
 		if (is_alias($value) && (alias_get_type($value) == 'network')) {
 			$net = alias_to_subnets_recursive($value);
 			if ((!is_subnetv4($net[0]) && ($ipproto == 'ipv4')) ||
-			    (!is_subnetv6($net[0]) && ($ipproto == 'ipv6')) ||
-			    (count($net) > 1)) {
+				(!is_subnetv6($net[0]) && ($ipproto == 'ipv6')) ||
+				(count($net) > 1)) {
 				return false;
 			}
 			return true;
 		} else {
 			if ((!is_subnetv4($value) && ($ipproto == 'ipv4')) ||
-			    (!is_subnetv6($value) && ($ipproto == 'ipv6'))) { 
+				(!is_subnetv6($value) && ($ipproto == 'ipv6'))) { 
 				return false;
 			}
 		}
@@ -924,7 +924,7 @@ function openvpn_reconfigure($mode, $settings) {
 	$conf .= "daemon\n";
 
 	if (!empty($settings['ping_method']) &&
-	    $settings['ping_method'] == 'ping') {
+		$settings['ping_method'] == 'ping') {
 		$conf .= "ping {$settings['ping_seconds']}\n";
 
 		if (!empty($settings['ping_push'])) {
@@ -936,13 +936,13 @@ function openvpn_reconfigure($mode, $settings) {
 
 		if (!empty($settings['ping_action_push'])) {
 			$conf .= "push \"{$action} " .
-			    "{$settings['ping_action_seconds']}\"\n";
+				"{$settings['ping_action_seconds']}\"\n";
 		}
 	} else {
 		$conf .= "keepalive " .
-		    ($settings['keepalive_interval']
+			($settings['keepalive_interval']
 			?: $openvpn_default_keepalive_interval) . " " .
-		    ($settings['keepalive_timeout']
+			($settings['keepalive_timeout']
 			?: $openvpn_default_keepalive_timeout) . "\n";
 	}
 
@@ -969,7 +969,7 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 	if ($settings['dev_mode'] === 'tun' && isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
 		if (($settings['mode'] == 'server_tls') || ($settings['mode'] == 'server_tls_user') ||
-		    (($settings['mode'] == 'server_user') && ($settings['username_as_common_name'] == 'enabled'))) {
+			(($settings['mode'] == 'server_user') && ($settings['username_as_common_name'] == 'enabled'))) {
 			$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
 			if (is_domain($domain)) {
 				$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
@@ -1039,7 +1039,7 @@ function openvpn_reconfigure($mode, $settings) {
 				//  use the server directive. It works for a single client without it.
 				//  See ticket #1417
 				if ((!empty($ip) && !empty($mask)) ||
-				    (!empty($ipv6) && !empty($prefix))) {
+					(!empty($ipv6) && !empty($prefix))) {
 					$add_ccd = false;
 					if (is_ipaddr($ip) && ($cidr < 30)) {
 						$add_ccd = true;
@@ -1075,7 +1075,7 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_user':
 			case 'server_tls_user':
 				if ((!empty($ip) && !empty($mask)) ||
-				    (!empty($ipv6) && !empty($prefix))) {
+					(!empty($ipv6) && !empty($prefix))) {
 					if (is_ipaddr($ip)) {
 						$conf .= "server {$ip} {$mask}\n";
 					}
@@ -1118,7 +1118,7 @@ function openvpn_reconfigure($mode, $settings) {
 			case 'server_tls_user':
 				/* username-as-common-name is not compatible with server-bridge */
 				if ((stristr($conf, "server-bridge") === false) &&
-				    ($settings['username_as_common_name'] != 'disabled')) {
+					($settings['username_as_common_name'] != 'disabled')) {
 					$conf .= "username-as-common-name\n";
 				}
 				if (!empty($settings['authmode'])) {
@@ -1176,11 +1176,11 @@ function openvpn_reconfigure($mode, $settings) {
 				break;
 		}
 		if ($settings['mode'] != 'p2p_shared_key' &&
-		    isset($settings['duplicate_cn'])) {
+			isset($settings['duplicate_cn'])) {
 			$conf .= "duplicate-cn\n";
 		}
 		if (($settings['mode'] != 'p2p_shared_key') &&
-		    isset($settings['remote_cert_tls'])) {
+			isset($settings['remote_cert_tls'])) {
 			$conf .= "remote-cert-tls client\n";
 		}
 	}
@@ -1277,7 +1277,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		if (($settings['mode'] != 'shared_key') &&
-		    isset($settings['remote_cert_tls'])) {
+			isset($settings['remote_cert_tls'])) {
 			$conf .= "remote-cert-tls server\n";
 		}
 	}
@@ -1383,7 +1383,7 @@ function openvpn_reconfigure($mode, $settings) {
 	 * If it is not set, assume enabled since that is OpenVPN's default.
 	 * Note that diabling this is now deprecated and will be removed in a future version of OpenVPN */
 	if (($settings['ncp_enable'] == "disabled") ||
-	    ($settings['mode'] == "p2p_shared_key")) {
+		($settings['mode'] == "p2p_shared_key")) {
 		if ($settings['mode'] != "p2p_shared_key") {
 			/* Do not include this option for shared key as it is redundant. */
 			$conf .= "ncp-disable\n";
@@ -1423,7 +1423,7 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	if (($settings['allow_compression'] != 'no') &&
-	    !empty($compression)) {
+		!empty($compression)) {
 		$conf .= "{$compression}\n";
 		if ($settings['compression_push']) {
 			$conf .= "push \"{$compression}\"\n";
@@ -1461,8 +1461,8 @@ function openvpn_reconfigure($mode, $settings) {
 
 	/* UDP Fast I/O. Only compatible with UDP and also not compatible with OpenVPN's "shaper" directive. */
 	if ($settings['udp_fast_io']
-	    && (strtolower(substr($settings['protocol'], 0, 3)) == "udp")
-	    && (empty($settings['use_shaper']))) {
+		&& (strtolower(substr($settings['protocol'], 0, 3)) == "udp")
+		&& (empty($settings['use_shaper']))) {
 		$conf .= "fast-io\n";
 	}
 
@@ -1480,10 +1480,10 @@ function openvpn_reconfigure($mode, $settings) {
 	 */
 	list($ip, $cidr) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 	if ((!empty($settings['exit_notify']) &&
-	    is_numericint($settings['exit_notify']) &&
-	    (strtolower(substr($settings['protocol'], 0, 3)) == "udp")) &&
-	    ((($mode == "server") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) && !empty($ip)))) ||
-	    (($mode == "client") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) || empty($ip)))))) {
+		is_numericint($settings['exit_notify']) &&
+		(strtolower(substr($settings['protocol'], 0, 3)) == "udp")) &&
+		((($mode == "server") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) && !empty($ip)))) ||
+		(($mode == "client") && (($settings['mode'] != 'p2p_shared_key') && (($cidr < 30) || empty($ip)))))) {
 		$conf .= "explicit-exit-notify {$settings['exit_notify']}\n";
 	}
 
@@ -1491,15 +1491,15 @@ function openvpn_reconfigure($mode, $settings) {
 	 * Has similar restrictions to Exit Notify (above) but only for server mode.
 	 */
 	if (!empty($settings['inactive_seconds']) &&
-	    !(($mode == "server") && (($settings['mode'] == 'p2p_shared_key') || (($cidr >= 30) || empty($ip))))) {
+		!(($mode == "server") && (($settings['mode'] == 'p2p_shared_key') || (($cidr >= 30) || empty($ip))))) {
 		$conf .= "inactive {$settings['inactive_seconds']}\n";
 	}
 
 	/* Send and Receive Buffer Settings */
 	if (is_numericint($settings['sndrcvbuf'])
-	    && ($settings['sndrcvbuf'] > 0)
-	    && ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.sendbuf_max'))
-	    && ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.recvbuf_max'))) {
+		&& ($settings['sndrcvbuf'] > 0)
+		&& ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.sendbuf_max'))
+		&& ($settings['sndrcvbuf'] <= get_single_sysctl('net.inet.tcp.recvbuf_max'))) {
 		$conf .= "sndbuf {$settings['sndrcvbuf']}\n";
 		$conf .= "rcvbuf {$settings['sndrcvbuf']}\n";
 	}
@@ -1572,7 +1572,7 @@ function openvpn_restart($mode, $settings) {
 
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip")) {
-	       	$carpstatus = get_carp_bind_status($settings['interface']);
+		   	$carpstatus = get_carp_bind_status($settings['interface']);
 		/* Do not start an instance if vip aliased to BACKUP CARP
 		 * see https://redmine.pfsense.org/issues/11793 */ 
 		if (in_array($carpstatus, array('BACKUP', 'INIT'))) {
@@ -1800,12 +1800,12 @@ function openvpn_resync_all($interface = "") {
 			$fpath = "{$g['openvpn_base']}/{$type}{$settings['vpnid']}/interface";
 			$gw_group_change = FALSE;
 			$ip_change = ($interface === "") ||
-			    ($interface === $settings['interface']);
+				($interface === $settings['interface']);
 
 			if (!$ip_change && file_exists($fpath)) {
 				$gw_group_change =
-				    (trim(file_get_contents($fpath), " \t\n") !=
-				    get_failover_interface(
+					(trim(file_get_contents($fpath), " \t\n") !=
+					get_failover_interface(
 					$settings['interface']));
 			}
 
@@ -1889,14 +1889,14 @@ function openvpn_get_active_servers($type="multipoint") {
 			list($tn, $sm) = openvpn_gen_tunnel_network($settings['tunnel_network']);
 
 			if ((($server['mode'] == "p2p_shared_key") ||
-			    (($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
-			    ($sm >= 30)) &&
-			    ($type == "p2p")) {
+				(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) ||
+				($sm >= 30)) &&
+				($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
 			} elseif (($server['mode'] != "p2p_shared_key") &&
-			    !(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
-			    ($type == "multipoint") &&
-			    ($sm < 30)) {
+				!(($settings['dev_mode'] == 'tap') && empty($settings['tunnel_network'])) &&
+				($type == "multipoint") &&
+				($sm < 30)) {
 				$servers[] = openvpn_get_server_status($server, $socket);
 			}
 		}
@@ -2274,7 +2274,7 @@ function openvpn_gen_routes($value, $ipproto = "ipv4", $push = false, $iroute = 
 		if (is_alias($network)) {
 			foreach (alias_to_subnets_recursive($network) as $net) {
 				if ((($ipproto == "ipv4") && is_subnetv4($net)) ||
-				    (($ipproto == "ipv6") && is_subnetv6($net))) {
+					(($ipproto == "ipv6") && is_subnetv6($net))) {
 					$networks[] = $net;
 				}
 			}
@@ -2353,8 +2353,8 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
 /****f* certs/openvpn_is_tunnel_network_in_use
  * NAME
  *   openvpn_is_tunnel_network_in_use
- *     Check if the supplied network is in use as an OpenVPN server or client
- *     tunnel network
+ *	 Check if the supplied network is in use as an OpenVPN server or client
+ *	 tunnel network
  * INPUTS
  *   $net : The IPv4 or IPv6 network to check
  * RESULT
@@ -2374,7 +2374,7 @@ function openvpn_is_tunnel_network_in_use($net) {
 	foreach(array('server', 'client') as $mode) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $ovpn) {
 			if (!empty($ovpn[$tocheck]) &&
-			    ($ovpn[$tocheck] == $net)) {
+				($ovpn[$tocheck] == $net)) {
 				return true;
 			}
 		}
