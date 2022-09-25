@@ -33,8 +33,8 @@ if (!function_exists('platform_booting')) {
 //if (in_array("/etc/inc/config.inc", get_included_files()))
 //	return;
 
-// Set the memory limit to 128M on i386.  When someone has something like 500+ tunnels
-// the parser needs quite a bit of ram.   Do not remove this line unless you
+// Set the memory limit to 128M on i386. When someone has something like 500+ tunnels
+// the parser needs quite a bit of ram. Do not remove this line unless you
 // know what you are doing.  If in doubt, check with dev@ _/FIRST/_!
 if (!$ARCH) {
 	$ARCH = php_uname("m");
@@ -67,7 +67,7 @@ if (file_exists("/debugging")) {
 }
 
 if (platform_booting(true) &&
-    !file_exists($g['cf_conf_path'] . "/config.xml")) {
+	!file_exists($g['cf_conf_path'] . "/config.xml")) {
 	echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
@@ -145,7 +145,7 @@ $config = parse_config();
 
 /* set timezone */
 if (isset($config['system']['timezone']) &&
-    !empty($config['system']['timezone'])) {
+	!empty($config['system']['timezone'])) {
 	$timezone = $config['system']['timezone'];
 } elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
 	$timezone = $g['default_timezone'];

@@ -317,7 +317,7 @@ EOD;
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (is_array($config['interfaces']['lan']) &&
-			    !is_array($config['interfaces']['lan']['wireless'])) {
+				!is_array($config['interfaces']['lan']['wireless'])) {
 				$config['interfaces']['lan']['wireless'] = array();
 			}
 		} else {
@@ -338,7 +338,7 @@ EOD;
 		$config['interfaces']['wan']['enable'] = true;
 		if (preg_match($g['wireless_regex'], $wanif)) {
 			if (is_array($config['interfaces']['wan']) &&
-			    !is_array($config['interfaces']['wan']['wireless'])) {
+				!is_array($config['interfaces']['wan']['wireless'])) {
 				$config['interfaces']['wan']['wireless'] = array();
 			}
 		} else {
@@ -457,7 +457,7 @@ function vlan_setup() {
 			$vlan_capable = 0;
 			foreach ($iflist as $iface => $ifa) {
 				echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
-				    $ifa['up'] ? "   (up)" : "");
+					$ifa['up'] ? "   (up)" : "");
 				$vlan_capable++;
 			}
 		}
@@ -473,8 +473,8 @@ function vlan_setup() {
 		if ($vlan['if']) {
 			if (!array_key_exists($vlan['if'], $iflist)) {
 				printf(gettext(
-				    '%1$sInvalid interface name \'%2$s\'%3$s'),
-				    "\n", $vlan['if'], "\n");
+					'%1$sInvalid interface name \'%2$s\'%3$s'),
+					"\n", $vlan['if'], "\n");
 				continue;
 			}
 		} else {

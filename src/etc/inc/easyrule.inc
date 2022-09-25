@@ -208,9 +208,9 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 		}
 
 		/* Since the alias already exists, just add to it. */
-		$alias['name']    = $a_aliases[$id]['name'];
-		$alias['type']    = $a_aliases[$id]['type'];
-		$alias['descr']   = $a_aliases[$id]['descr'];
+		$alias['name']	= $a_aliases[$id]['name'];
+		$alias['type']	= $a_aliases[$id]['type'];
+		$alias['descr']	= $a_aliases[$id]['descr'];
 
 		$a_address[] = $host.'/'.$mask;
 		$a_detail[] = gettext('Entry added') . ' ' . date('r');
@@ -220,12 +220,12 @@ function easyrule_block_alias_add($host, $int = 'wan') {
 
 	} else {
 		/* Create a new alias with all the proper information */
-		$alias['name']    = $blockaliasname . strtoupper($int);
-		$alias['type']    = 'network';
-		$alias['descr']   = gettext("Hosts blocked from Firewall Log view");
+		$alias['name']	= $blockaliasname . strtoupper($int);
+		$alias['type']	= 'network';
+		$alias['descr']	= gettext("Hosts blocked from Firewall Log view");
 
-		$alias['address'] = $host . '/' . $mask;
-		$alias['detail']  = gettext('Entry added') . ' ' . date('r') . '||';
+		$alias['address']	= $host . '/' . $mask;
+		$alias['detail']	= gettext('Entry added') . ' ' . date('r') . '||';
 	}
 
 	/* Replace the old alias if needed, otherwise tack it on the end */

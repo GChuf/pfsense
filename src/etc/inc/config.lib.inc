@@ -497,7 +497,7 @@ function convert_config() {
 		$cur = $config['version'] * 10;
 		$next = $cur + 1;
 		$migration_function = sprintf('upgrade_%03d_to_%03d', $cur,
-		    $next);
+			$next);
 
 		foreach (array("", "_custom") as $suffix) {
 			$migration_function .= $suffix;
@@ -507,8 +507,8 @@ function convert_config() {
 			if (isset($already_run[$migration_function])) {
 				/* Already executed, skip now */
 				unset($config['system']
-				    ['already_run_config_upgrade']
-				    [$migration_function]);
+					['already_run_config_upgrade']
+					[$migration_function]);
 			} else {
 				$migration_function();
 			}

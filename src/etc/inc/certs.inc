@@ -241,7 +241,7 @@ function ca_create(& $ca, $keylen, $lifetime, $dn, $digest_alg = "sha256", $keyt
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt)) {
+		!openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -299,7 +299,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt)) {
+		!openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -383,10 +383,10 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 	// If this is a self-signed cert, blank out the CA and sign with the cert's key
 	if ($type == "self-signed") {
-		$ca           = null;
+		$ca			= null;
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
-		$ca_serial    = cert_get_random_serial();
+		$ca_serial	= cert_get_random_serial();
 		$cert['type'] = "server";
 	}
 
@@ -405,7 +405,7 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 
 	// export our certificate data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt)) {
+		!openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -455,7 +455,7 @@ function csr_generate(& $cert, $keylen, $dn, $type = "user", $digest_alg = "sha2
 
 	// export our request data
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_csr_export($res_csr, $str_csr)) {
+		!openssl_csr_export($res_csr, $str_csr)) {
 		return false;
 	}
 
@@ -696,7 +696,7 @@ function cert_get_ocspstaple($str_crt, $decode = true) {
 	}
 	$crt_details = openssl_x509_parse($str_crt);
 	if (($crt_details['extensions']['tlsfeature'] == "status_request") ||
-	    !empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
+		!empty($crt_details['extensions']['1.3.6.1.5.5.7.1.24'])) {
 		return true;
 	}
 	return false;
@@ -731,8 +731,8 @@ function cert_get_dates($str_crt, $decode = true, $outputstring = true) {
 	}
 	$crt_details = openssl_x509_parse($str_crt);
 
-	$start = cert_format_date($crt_details['validFrom'], $crt_details['validFrom_time_t'], $outputstring);
-	$end   = cert_format_date($crt_details['validTo'], $crt_details['validTo_time_t'], $outputstring);
+	$start	= cert_format_date($crt_details['validFrom'], $crt_details['validFrom_time_t'], $outputstring);
+	$end	= cert_format_date($crt_details['validTo'], $crt_details['validTo_time_t'], $outputstring);
 
 	return array($start, $end);
 }
@@ -815,7 +815,7 @@ function is_ldap_peer_ca($caref) {
 	}
 	foreach ($config['system']['authserver'] as $authserver) {
 		if (($authserver['ldap_caref'] == $caref) &&
-		    ($authserver['ldap_urltype'] != 'Standard TCP')) {
+			($authserver['ldap_urltype'] != 'Standard TCP')) {
 			return true;
 		}
 	}
@@ -889,7 +889,7 @@ function is_ipsec_cert($certref) {
 function is_webgui_cert($certref) {
 	global $config;
 	if (($config['system']['webgui']['ssl-certref'] == $certref) &&
-	    ($config['system']['webgui']['protocol'] != "http")) {
+		($config['system']['webgui']['protocol'] != "http")) {
 		return true;
 	}
 }
@@ -904,7 +904,7 @@ function is_package_cert($certref) {
 	/* Check if any package is using certificate */
 	foreach ($certificates_used_by_packages as $name => $package) {
 		if (is_array($package['certificatelist'][$certref]) &&
-		    isset($package['certificatelist'][$certref]) > 0) {
+			isset($package['certificatelist'][$certref]) > 0) {
 			return true;
 		}
 	}
@@ -926,8 +926,8 @@ function is_captiveportal_cert($certref) {
 function is_unbound_cert($certref) {
 	global $config;
 	if (($config['unbound']['sslcertref'] == $certref) &&
-	    isset($config['unbound']['enablessl']) &&
-	    isset($config['unbound']['enable'])) {
+		isset($config['unbound']['enablessl']) &&
+		isset($config['unbound']['enable'])) {
 		return true;
 	}
 }
@@ -1101,8 +1101,8 @@ function cert_unrevoke($cert, & $crl) {
 	foreach ($crl['cert'] as $id => $rcert) {
 		/* Check for a match by refid, name, or serial number */
 		if (($rcert['refid'] == $cert['refid']) ||
-		    ($rcert['descr'] == $cert['descr']) ||
-		    (crl_get_entry_serial($rcert) == $serial)) {
+			($rcert['descr'] == $cert['descr']) ||
+			(crl_get_entry_serial($rcert) == $serial)) {
 			unset($crl['cert'][$id]);
 			if (count($crl['cert']) == 0) {
 				// Protect against accidentally switching the type to imported, for older CRLs
@@ -1128,9 +1128,9 @@ function cert_compare($cert1, $cert2) {
 	$c1 = base64_decode($cert1['crt']);
 	$c2 = base64_decode($cert2['crt']);
 	if ((cert_get_issuer($c1, false) == cert_get_issuer($c2, false)) &&
-	    (cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
-	    (cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
-	    (cert_get_publickey($c1, false) == cert_get_publickey($c2, false))) {
+		(cert_get_subject($c1, false) == cert_get_subject($c2, false)) &&
+		(cert_get_serial($c1, false) == cert_get_serial($c2, false)) &&
+		(cert_get_publickey($c1, false) == cert_get_publickey($c2, false))) {
 		return true;
 	}
 	return false;
@@ -1165,15 +1165,15 @@ function crl_get_entry_serial($entry) {
 /****f* certs/cert_validate_serial
  * NAME
  *   cert_validate_serial - Validate a given string to test if it can be used as
- *                          a certificate serial.
+ *						  a certificate serial.
  * INPUTS
- *   $serial     : Serial number string to test
+ *   $serial	 : Serial number string to test
  *   $returnvalue: Whether to return the parsed value or true/false
  * RESULT
  *   If $returnvalue is true, then the parsed ASN.1 integer value string for
- *     $serial or null if invalid
+ *	 $serial or null if invalid
  *   If $returnvalue is false, then true/false based on whether or not $serial
- *     is valid.
+ *	 is valid.
  ******/
 
 function cert_validate_serial($serial, $returnvalue = false, $allowlarge = false) {
@@ -1219,7 +1219,7 @@ function cert_validate_serial($serial, $returnvalue = false, $allowlarge = false
 /****f* certs/cert_generate_serial
  * NAME
  *   cert_generate_serial - Generate a random positive integer usable as a
- *                          certificate serial number
+ *						  certificate serial number
  * INPUTS
  *   None
  * RESULT
@@ -1240,7 +1240,7 @@ function cert_generate_serial() {
  * NAME
  *   ca_has_serial - Check if a serial number is used by any certificate in a given CA
  * INPUTS
- *   $ca    : Certificate Authority to check
+ *   $ca	: Certificate Authority to check
  *   $serial: Serial number to check
  * RESULT
  *   true if the serial number is in use by a certificate issued by this CA,
@@ -1253,7 +1253,7 @@ function ca_has_serial($caref, $serial) {
 	/* Check certs first -- more likely to find a hit */
 	foreach ($config['cert'] as $cert) {
 		if (($cert['caref'] == $caref) &&
-		    (cert_get_serial($cert['crt'], true) == $serial)) {
+			(cert_get_serial($cert['crt'], true) == $serial)) {
 			/* If this certificate is issued by the CA in question
 			 * and has a matching serial number, stop processing
 			 * and return true. */
@@ -1271,7 +1271,7 @@ function ca_has_serial($caref, $serial) {
 	/* Check other CAs for a match (intermediates signed by this CA) */
 	foreach ($config['ca'] as $ca) {
 		if (($ca['caref'] == $caref) &&
-		    (cert_get_serial($ca['crt'], true) == $serial)) {
+			(cert_get_serial($ca['crt'], true) == $serial)) {
 			/* If this CA is issued by the CA in question
 			 * and has a matching serial number, stop processing
 			 * and return true. */
@@ -1307,8 +1307,8 @@ function cert_get_random_serial($caref = '') {
 		 *  * Must be a valid ASN.1 serial number
 		 *  * Cannot be used by any other certificate on this CA */
 		if (($serial != 0) &&
-		    cert_validate_serial($serial) &&
-		    !ca_has_serial($caref, $serial)) {
+			cert_validate_serial($serial) &&
+			!ca_has_serial($caref, $serial)) {
 			/* If all conditions are met, we have a good serial, so stop. */
 			break;
 		}
@@ -1353,7 +1353,7 @@ function ca_get_next_serial(& $ca) {
 function crl_contains_cert($crl, $cert) {
 	global $config;
 	if (!is_array($config['crl']) ||
-	    !is_array($crl['cert'])) {
+		!is_array($crl['cert'])) {
 		return false;
 	}
 
@@ -1447,7 +1447,7 @@ function is_package_crl($crlref) {
 	/* Check if any package is using CRL */
 	foreach ($certificates_used_by_packages as $name => $package) {
 		if (is_array($package['certificatelist'][$crlref]) &&
-		    (count($package['certificatelist'][$crlref]) > 0)) {
+			(count($package['certificatelist'][$crlref]) > 0)) {
 			return true;
 		}
 	}
@@ -1539,7 +1539,7 @@ function cert_type_config_section($type) {
 /****f* certs/is_cert_locally_renewable
  * NAME
  *   is_cert_locally_renewable - Check to see if an existing certificate can be
- *                               renewed by a local internal CA.
+ *							   renewed by a local internal CA.
  * INPUTS
  *   $cert : The certificate to be tested
  * RESULT
@@ -1587,12 +1587,12 @@ $cert_strict_values = array(
  * INPUTS
  *   $cert : The entry to be renewed (used as a reference so it can be altered directly)
  *   $reusekey : Whether or not to reuse the existing key for the certificate
- *      true: Reuse the existing key (Default)
- *      false: Generate a new key based on current (or enforced minimum) parameters
+ *	  true: Reuse the existing key (Default)
+ *	  false: Generate a new key based on current (or enforced minimum) parameters
  *   $strictsecurity : Whether or not to enforce stricter security for specific attributes
- *      true: Enforce maximum lifetime for server certs, minimum digest type, and
- *            minimum private key size. See https://redmine.pfsense.org/issues/9825
- *      false: Use existing values as-is (Default).
+ *	  true: Enforce maximum lifetime for server certs, minimum digest type, and
+ *			minimum private key size. See https://redmine.pfsense.org/issues/9825
+ *	  false: Use existing values as-is (Default).
  * RESULT
  *   true if successful, false if failure.
  * NOTES
@@ -1626,7 +1626,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	/* Form a new Distinguished Name from the existing values.
 	 * Note: Deprecated/unsupported DN fields may not be carried forward, but
-	 *       may be preserved to avoid altering a subject.
+	 *	   may be preserved to avoid altering a subject.
 	 */
 	$subject_map = array(
 		'CN' => 'commonName',
@@ -1666,7 +1666,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	/* If we are enforcing strict security, then cap the lifetime for server certificates */
 	if (($cert_type == 'server') && $strictsecurity &&
-	    ($lifetime > $cert_strict_values['max_server_cert_lifetime'])) {
+		($lifetime > $cert_strict_values['max_server_cert_lifetime'])) {
 		$lifetime = $cert_strict_values['max_server_cert_lifetime'];
 	}
 
@@ -1691,7 +1691,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	 * blacklist of insecure digest methods. */
 	$digest_alg = $cert_details['signatureTypeSN'];
 	if ($strictsecurity &&
-	    (in_array($digest_alg, $cert_strict_values['digest_blacklist']))) {
+		(in_array($digest_alg, $cert_strict_values['digest_blacklist']))) {
 		$digest_alg = 'sha256';
 	}
 
@@ -1714,7 +1714,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 	$private_key_bits = $key_details['bits'];
 	if ($strictsecurity) {
 		if (($key_details['type'] == OPENSSL_KEYTYPE_RSA) &&
-		    ($private_key_bits < $cert_strict_values['min_private_key_bits'])) {
+			($private_key_bits < $cert_strict_values['min_private_key_bits'])) {
 			$private_key_bits = $cert_strict_values['min_private_key_bits'];
 			$reusekey = false;
 		} else if (!in_array($key_details['ec']['curve_name'], $curve_compatible_list)) {
@@ -1775,7 +1775,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 		$ca_res_crt   = null;
 		$ca_res_key   = $res_key;
 		/* Use random serial from this CA/Self-Signed Cert */
-		$ca_serial    = cert_get_random_serial($cert['refid']);
+		$ca_serial	= cert_get_random_serial($cert['refid']);
 	}
 
 	/* Sign the CSR */
@@ -1788,7 +1788,7 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
 
 	/* Attempt to read the key and certificate and if that fails, bail */
 	if (!openssl_pkey_export($res_key, $str_key) ||
-	    !openssl_x509_export($res_crt, $str_crt)) {
+		!openssl_x509_export($res_crt, $str_crt)) {
 		return false;
 	}
 
@@ -1806,11 +1806,11 @@ function cert_renew(& $cert, $reusekey = true, $strictsecurity = false) {
  *   $refid: The refid of a certificate to check
  * RESULT
  *   array containing the services which use this certificate, including:
- *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
- *     services: Array of service definitions using this certificate, with:
- *       name: Name of the service
- *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
- *     packages: Array containing package names using this certificate.
+ *	 webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *	 services: Array of service definitions using this certificate, with:
+ *	   name: Name of the service
+ *	   extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *	 packages: Array containing package names using this certificate.
  ******/
 
 function cert_get_all_services($refid) {
@@ -1848,7 +1848,7 @@ function cert_get_all_services($refid) {
 	init_config_arr(array('ipsec', 'phase1'));
 	foreach ($config['ipsec']['phase1'] as $ipsec) {
 		if (($ipsec['authentication_method'] == 'cert') &&
-		    ($ipsec['certref'] == $refid)) {
+			($ipsec['certref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
 			/* Stop after finding one, no need to search for more. */
 			break;
@@ -1860,7 +1860,7 @@ function cert_get_all_services($refid) {
 	init_config_arr(array('captiveportal'));
 	foreach ($config['captiveportal'] as $zone => $portal) {
 		if (isset($portal['enable']) && isset($portal['httpslogin']) &&
-		    ($portal['certref'] == $refid)) {
+			($portal['certref'] == $refid)) {
 			/* Captive Portal zones are restarted individually, so
 			 * we need to note the zone name. */
 			$services['services'][] = array(
@@ -1876,7 +1876,7 @@ function cert_get_all_services($refid) {
 	$pkgcerts = pkg_call_plugins('plugin_certificates', array('type' => 'certificates', 'event' => 'used_certificates'));
 	foreach ($pkgcerts as $name => $package) {
 		if (is_array($package['certificatelist'][$refid]) &&
-		    isset($package['certificatelist'][$refid]) > 0) {
+			isset($package['certificatelist'][$refid]) > 0) {
 			$services['packages'][] = $name;
 		}
 	}
@@ -1891,11 +1891,11 @@ function cert_get_all_services($refid) {
  *   $refid: The refid of a certificate authority to check
  * RESULT
  *   array containing the services which use this certificate authority, including:
- *     webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
- *     services: Array of service definitions using this certificate, with:
- *       name: Name of the service
- *       extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
- *     packages: Array containing package names using this certificate.
+ *	 webgui: Present and true if the WebGUI uses this certificate. Unset otherwise.
+ *	 services: Array of service definitions using this certificate, with:
+ *	   name: Name of the service
+ *	   extras: Extra information needed by some services, such as OpenVPN or Captive Portal.
+ *	 packages: Array containing package names using this certificate.
  * NOTES
  *   This searches recursively to find entries using this CA as well as intermediate
  *   CAs and certificates signed by this CA, and returns a single set of all services.
@@ -1930,7 +1930,7 @@ function ca_get_all_services($refid) {
 	}
 	foreach ($config['ipsec']['phase1'] as $ipsec) {
 		if (($ipsec['authentication_method'] == 'cert') &&
-		    ($ipsec['caref'] == $refid)) {
+			($ipsec['caref'] == $refid)) {
 			$services['services'][] = array('name' => 'ipsec');
 			break;
 		}
@@ -2017,8 +2017,8 @@ function cert_restart_services($services) {
  *   cert_get_lifetime - Returns the number of days the certificate is valid
  * INPUTS
  *   $untilexpire: Boolean
- *     true: The number of days returned is from now until the certificate expiration.
- *     false (default): The number of days returned is the total lifetime of the certificate.
+ *	 true: The number of days returned is from now until the certificate expiration.
+ *	 false (default): The number of days returned is the total lifetime of the certificate.
  * RESULT
  *   Integer number of days in the certificate total or remaining lifetime
  ******/
@@ -2062,7 +2062,7 @@ function cert_analyze_lifetime($expiredays) {
 	/* Number of days at which to warn of expiration. */
 	init_config_arr(array('notifications', 'certexpire'));
 	if (!isset($config['notifications']['certexpire']['expiredays']) ||
-	    empty($config['notifications']['certexpire']['expiredays'])) {
+		empty($config['notifications']['certexpire']['expiredays'])) {
 		$warning_days = $g['default_cert_expiredays'];
 	} else {
 		$warning_days = $config['notifications']['certexpire']['expiredays'];
@@ -2343,7 +2343,7 @@ function cert_notify_expiring() {
 /****f* certs/ca_setup_trust_store
  * NAME
  *   ca_setup_trust_store - Setup local CA trust store so that CA entries in the
- *                          configuration may be trusted by the operating system.
+ *						  configuration may be trusted by the operating system.
  * INPUTS
  *   None
  * RESULT
@@ -2364,9 +2364,9 @@ function ca_setup_trust_store() {
 	foreach ($config['ca'] as $ca) {
 		/* If the entry is invalid or is not trusted, skip it. */
 		if (!is_array($ca) ||
-		    empty($ca['crt']) ||
-		    !isset($ca['trust']) ||
-		    ($ca['trust'] != "enabled")) {
+			empty($ca['crt']) ||
+			!isset($ca['trust']) ||
+			($ca['trust'] != "enabled")) {
 			continue;
 		}
 
@@ -2377,12 +2377,12 @@ function ca_setup_trust_store() {
 /****f* certs/ca_setup_capath
  * NAME
  *   ca_setup_capath - Setup CApath structure so that CA chains and related CRLs
- *                     may be written and validated by the -CApath option in
- *                     OpenSSL and other compatible validators.
+ *					 may be written and validated by the -CApath option in
+ *					 OpenSSL and other compatible validators.
  * INPUTS
- *   $ca     : A CA (not a refid) to write
+ *   $ca	 : A CA (not a refid) to write
  *   $basedir: The directory which will contain the CA structure.
- *   $crl    : A CRL (not a refid) associated with the CA to write.
+ *   $crl	: A CRL (not a refid) associated with the CA to write.
  *   $refresh: Refresh CRLs -- When true, perform no cleanup and increment suffix
  * RESULT
  *   $basedir is populated with CA and CRL files in a format usable by OpenSSL
@@ -2501,7 +2501,7 @@ $curve_compatible_list = array_unique(call_user_func_array('array_merge', $cert_
 /****f* certs/cert_build_curve_list
  * NAME
  *   cert_build_curve_list - Build an option list of ECDSA curves with notations
- *                           about known compatible uses.
+ *						   about known compatible uses.
  * INPUTS
  *   None
  * RESULT
@@ -2534,14 +2534,14 @@ function cert_build_curve_list() {
 /****f* certs/cert_check_pkey_compatibility
  * NAME
  *   cert_check_pkey_compatibility - Check a private key to see if it can be
- *                                   used in a specific compatible context.
+ *								   used in a specific compatible context.
  * INPUTS
- *   $pkey    : The private key to check
+ *   $pkey	: The private key to check
  *   $consumer: The consumer name used to validate the curve. See the contents
- *                 of $cert_curve_compatible for details.
+ *				 of $cert_curve_compatible for details.
  * RESULT
  *   true if the private key may be used in requested area, or if there are no
- *        restrictions.
+ *		restrictions.
  *   false if the private key cannot be used.
  ******/
 
@@ -2563,13 +2563,13 @@ function cert_check_pkey_compatibility($pkey, $consumer) {
 /****f* certs/cert_build_list
  * NAME
  *   cert_build_list - Build an option list of cert or CA entries, checked
- *                     against a specific consumer name.
+ *					 against a specific consumer name.
  * INPUTS
- *   $type    : 'ca' for certificate authority entries, 'cert' for certificates.
+ *   $type	: 'ca' for certificate authority entries, 'cert' for certificates.
  *   $consumer: The consumer name used to filter certificates out of the result.
- *                 See the contents of $cert_curve_compatible for details.
+ *				 See the contents of $cert_curve_compatible for details.
  *   $selectsource: Then true, outputs in a format usable by select_source in
- *                  packages.
+ *				  packages.
  *   $addnone: When true, a 'none' choice is added to the list.
  * RESULT
  *   Returns an option list of entries with incompatible entries removed. This
