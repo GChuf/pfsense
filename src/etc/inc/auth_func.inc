@@ -47,9 +47,9 @@ function cmp_page_matches($page, & $matches, $fullwc = true) {
 
 		/* Some tabs are just JS anchors, detect this case. */
 		if ((substr($page, 0, 1) == "#") &&
-		    (strpos($page, '.') === false) &&
-		    (strpos($page, '/') === false) &&
-		    (strpos($page, '?') === false)) {
+			(strpos($page, '.') === false) &&
+			(strpos($page, '/') === false) &&
+			(strpos($page, '?') === false)) {
 			return true;
 		}
 

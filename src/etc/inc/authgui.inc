@@ -117,8 +117,8 @@ function display_error_form($http_code, $desc) {
 <html lang="en">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
+		<link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+		<link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
 		<title><?=gettext("Error"); ?></title>
 	</head>
 
@@ -192,7 +192,7 @@ function display_login_form() {
 	}
 
 	/* Check against locally configured IP addresses, which will catch when someone
-	   port forwards WebGUI access from WAN to an internal IP on the router. */
+		port forwards WebGUI access from WAN to an internal IP on the router. */
 	global $FilterIflist, $nifty_background;
 
 	$local_ip = false;
@@ -287,8 +287,8 @@ function display_login_form() {
 <html lang="en">
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-	    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
-	    <link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
+		<link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" type="text/css">
+		<link rel="stylesheet" href="/css/login.css?v=<?=filemtime('/usr/local/www/css/login.css')?>" type="text/css">
 		<title><?=$login_title; ?></title>
 		<script type="text/javascript">
 			//<![CDATA{
@@ -339,38 +339,38 @@ function display_login_form() {
 <?php
 	}
 ?>
-	            </div>
-	        </header>
+				</div>
+			</header>
 
-	        <div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
-	        	<div class="col-sm-4"></div>
+			<div style="background: <?=$logincssfile?>;" class="<?=$warnclass?>">
+				<div class="col-sm-4"></div>
 
-	        	<div class="col-sm-4 offset-md-4 logoCol">
+				<div class="col-sm-4 offset-md-4 logoCol">
 					<div class="loginCont center-block">
-		                <form method="post" <?=$loginautocomplete?> class="login">
-			                <p class="form-title">Sign In</p>
-			                <input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
-			                <input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
-			                <input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
-		                </form>
+						<form method="post" <?=$loginautocomplete?> class="login">
+							<p class="form-title">Sign In</p>
+							<input name="usernamefld" id="usernamefld" type="text" placeholder="Username" autocorrect="off" autocapitalize="none"/>
+							<input name="passwordfld" id="passwordfld" type="password" placeholder="Password" />
+							<input type="submit" name="login" value="Sign In" class="btn btn-success btn-sm" />
+						</form>
 					</div>
-	            </div>
+				</div>
 
-	        	<div class="col-sm-4"></div>
-	        </div>
+				<div class="col-sm-4"></div>
+			</div>
 
-	        <footer id="3">
-	            <div id="footertext">
+			<footer id="3">
+				<div id="footertext">
 					<p class="text-muted">
 						<?=print_credit()?>
 					</p>
-	            </div>
-	        </footer>
-	    </div>
+				</div>
+			</footer>
+		</div>
 
 		<script type="text/javascript">
 		//<![CDATA[
-			/* Prevent duplicate submission  */
+			/* Prevent duplicate submission */
 			events.push(function() {
 				var submitted = false;
 
@@ -386,7 +386,7 @@ function display_login_form() {
 		//]]>
 		</script>
 
-	    <script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
+		<script src="/vendor/jquery/jquery-3.5.1.min.js?v=<?=filemtime('/usr/local/www/vendor/jquery/jquery-3.5.1.min.js')?>"></script>
 		<script src="/vendor/bootstrap/js/bootstrap.min.js?v=<?=filemtime('/usr/local/www/vendor/bootstrap/js/bootstrap.min.js')?>"></script>
 		<script src="/js/pfSense.js?v=<?=filemtime('/usr/local/www/js/pfSense.js')?>"></script>
 

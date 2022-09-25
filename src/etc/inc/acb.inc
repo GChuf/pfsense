@@ -45,7 +45,7 @@ function get_device_key() {
 		}
 	}
 
-	$pkey =  file_get_contents("/etc/ssh/ssh_host_ed25519_key.pub");
+	$pkey = file_get_contents("/etc/ssh/ssh_host_ed25519_key.pub");
 
 	// Check that the key looks reasonable
 	if (substr($pkey, 0, 3) != "ssh") {
@@ -311,8 +311,8 @@ function upload_config($manual = false) {
 
 			if (strpos($data, "500") != false) {
 				$notice_text = sprintf(gettext(
-				    "An error occurred while uploading your %s configuration to "), $g['product_label']) .
-				    $upload_url . " (" . htmlspecialchars($data) . ")";
+					"An error occurred while uploading your %s configuration to "), $g['product_label']) .
+					$upload_url . " (" . htmlspecialchars($data) . ")";
 				log_error($notice_text . " - " . $data);
 				file_notice("AutoConfigBackup", $notice_text);
 				update_filter_reload_status($notice_text);
@@ -362,11 +362,11 @@ function setup_ACB($enable, $hint, $frequency, $minute, $hours, $month, $day, $d
 	}
 
 	install_cron_job("/usr/bin/nice -n20 /usr/local/bin/php /usr/local/sbin/execacb.php", $frequency == "cron",
-	   $minute,
-	   is_numeric($hours) ? $hours : "*",
-	   is_numeric($day) ? $day : "*",
-	   is_numeric($month) ? $month : "*",
-	   is_numeric($dow) ? $dow : "*"
+		$minute,
+		is_numeric($hours) ? $hours : "*",
+		is_numeric($day) ? $day : "*",
+		is_numeric($month) ? $month : "*",
+		is_numeric($dow) ? $dow : "*"
 	);
 
 	// Install cron job 

@@ -237,28 +237,28 @@ function moveHelpText(id) {
 
 // Increment the number at the end of the string
 function getStringInt( str )	{
-  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
-  return Number( data[ 2 ] );
+	var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+	return Number( data[ 2 ] );
 }
 
 // Increment the number at the end of the string
 function bumpStringInt( str )	{
-  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+	var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if (data)
-	newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
+	if (data)
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
 
-  return newStr || str;
+	return newStr || str;
 }
 
 // Decrement the number at the end of the string
 function decrStringInt( str )	{
-  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
+	var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if (data)
-	newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
+	if (data)
+		newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
 
-  return newStr || str;
+	return newStr || str;
 }
 
 // Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
@@ -714,9 +714,9 @@ function escapeHtml(text) {
 
 // Select every option in the specified multiselect
 function AllServers(id, selectAll) {
-   for (i = 0; i < id.length; i++)	   {
-	   id.eq(i).prop('selected', selectAll);
-   }
+	 for (i = 0; i < id.length; i++)		 {
+		 id.eq(i).prop('selected', selectAll);
+	 }
 }
 
 // Move all selected options from one multiselect to another
@@ -728,7 +728,7 @@ function moveOptions(From, To)	{
 		for (i=0; i<len; i++) {
 			if (From.eq(i).is(':selected')) {
 				option = From.eq(i).val();
-				value  = From.eq(i).text();
+				value	= From.eq(i).text();
 				To.append(new Option(value, option));
 				From.eq(i).remove();
 			}
@@ -799,7 +799,7 @@ function interceptGET() {
 		if (typeof attr !== typeof undefined && attr !== false) {
 			// Automatically apply a confirmation dialog to "Delete" icons
 			if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn')) &&
-			   ($(this).hasClass('fa-trash'))) {
+				 ($(this).hasClass('fa-trash'))) {
 				var msg = $.trim(this.textContent).toLowerCase();
 
 				if (!msg)
@@ -848,7 +848,7 @@ function postSubmit(data, target) {
 				.attr("name", name)
 				.val(data[name])
 		);
-    }
+	}
 
 	$form
 		.attr("method", "POST")

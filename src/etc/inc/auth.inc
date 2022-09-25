@@ -161,7 +161,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
 			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
-			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+				strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
 				$found_host = true;
 			}
 
@@ -223,8 +223,8 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 				$refifs = get_interface_arr();
 				foreach ($refifs as $rif) {
 					if (($referrer_host == find_interface_ip($rif)) ||
-					    ($referrer_host == find_interface_ipv6($rif)) ||
-					    ($referrer_host == find_interface_ipv6_ll($rif))) {
+						($referrer_host == find_interface_ipv6($rif)) ||
+						($referrer_host == find_interface_ipv6_ll($rif))) {
 						$found_host = true;
 						break;
 					}
@@ -350,7 +350,7 @@ function get_user_privileges(& $user) {
 
 	if ($authcfg['type'] == "ldap") {
 		if (isset($_SESSION["ldap_allowed_groups"]) &&
-		    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+			(time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
 			$allowed_groups = $_SESSION["ldap_allowed_groups"];
 		} else {
 			$allowed_groups = @ldap_get_groups($user['name'], $authcfg);
@@ -359,7 +359,7 @@ function get_user_privileges(& $user) {
 		}
 	} elseif ($authcfg['type'] == "radius") {
 		if (isset($_SESSION["radius_allowed_groups"]) &&
-		    (time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
+			(time() <= $_SESSION["auth_check_time"] + $recheck_time)) {
 			$allowed_groups = $_SESSION["radius_allowed_groups"];
 		} else {
 			$allowed_groups = @radius_get_groups($_SESSION['user_radius_attributes']);
@@ -413,7 +413,7 @@ function userHasPrivilege($userent, $privid = false) {
 			auth_get_authserver($config['system']['webgui']['authmode']),
 			$_SESSION['user_radius_attributes']);
 	if (($privid == 'user-config-readonly') &&
-	    (($userent['uid'] === "0") || (in_array('admins', $userGroups)))) {
+		(($userent['uid'] === "0") || (in_array('admins', $userGroups)))) {
 		return false;
 	}
 
@@ -482,7 +482,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		 */
 		unlink_if_exists("/var/cron/tabs/{$user['name']}");
 		$cmd = "/usr/sbin/pw userdel -n " .
-		    escapeshellarg($user['name']);
+			escapeshellarg($user['name']);
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
@@ -505,7 +505,7 @@ function local_sync_accounts($u2add, $u2del, $g2add, $g2del) {
 		}
 
 		$cmd = "/usr/sbin/pw groupdel -g " .
-		    escapeshellarg($group['name']);
+			escapeshellarg($group['name']);
 		if ($debug) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
@@ -765,7 +765,7 @@ function local_user_set(& $user) {
 	}
 
 	if ($user['keephistory'] && $shell_access &&
-	    !file_exists("{$user_home}/.keephistory")) {
+		!file_exists("{$user_home}/.keephistory")) {
 		@touch("{$user_home}/.keephistory");
 	} elseif (!$user['keephistory']) {
 		unlink_if_exists("{$user_home}/.keephistory");
@@ -819,7 +819,7 @@ function local_user_set_password(&$user, $password) {
 	$salt = substr(bin2hex(random_bytes(16)),0,16);
 	$user['sha512-hash'] = crypt($password, '$6$'. $salt . '$');
 	if (($user['name'] == $config['hasync']['username']) &&
-	    ($config['hasync']['adminsync'] == 'on')) {
+		($config['hasync']['adminsync'] == 'on')) {
 		$config['hasync']['new_password'] = $password;
 	}
 }
@@ -1365,7 +1365,7 @@ function ldap_get_groups($username, $authcfg) {
 	/* get groups from DN found */
 	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
 	/* since we know the DN is in $_SESSION['ldapdn'] */
-	//$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
+	//$search	= ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
 	if ($ldapscope == "one") {
 		$ldapfunc = "ldap_list";
 	} else {
@@ -1403,7 +1403,7 @@ function ldap_get_groups($username, $authcfg) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($gresults as $grp) {
 			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false)) ||
-			    ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
+				((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
 				$grpsplit = isset($authcfg['ldap_rfc2307']) ? explode(",", $grp["dn"]) : explode(",", $grp);
 				$memberof[] = preg_replace("/CN=/i", "", $grpsplit[0]);
 			}
@@ -2289,37 +2289,37 @@ EOD;
 			
 			$pam_sshd =<<<EOD
 # auth
-auth            sufficient      pam_radius.so
+auth		sufficient	pam_radius.so
 auth		required	pam_unix.so		no_warn try_first_pass
 
 # account
 account		required	pam_nologin.so
 account		required	pam_login_access.so
-account         sufficient      pam_radius.so
+account		sufficient	pam_radius.so
 
 # session
 session		required	pam_permit.so
 
 # password
-password        sufficient      pam_radius.so
+password	sufficient	pam_radius.so
 password	required	pam_unix.so		no_warn try_first_pass
 
 EOD;
 
 			$pam_system =<<<EOD
 # auth
-auth            sufficient      pam_radius.so
+auth		sufficient	pam_radius.so
 auth		required	pam_unix.so		no_warn try_first_pass
 
 # account
 account		required	pam_login_access.so
-account         sufficient      pam_radius.so
+account		sufficient	pam_radius.so
 
 # session
 session		required	pam_lastlog.so		no_fail
 
 # password
-password        sufficient      pam_radius.so
+password	sufficient	pam_radius.so
 password	required	pam_unix.so		no_warn try_first_pass
 
 EOD;
@@ -2366,13 +2366,13 @@ EOD;
 
 			$pam_sshd =<<<EOD
 # auth
-auth            sufficient      /usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
+auth		sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 auth		required	pam_unix.so		no_warn try_first_pass
 
 # account
 account		required	pam_nologin.so
 account		required	pam_login_access.so
-account         sufficient      /usr/local/lib/pam_ldap.so	ignore_authinfo_unavail ignore_unknown_user config=/var/etc/pam_ldap.conf
+account		sufficient	/usr/local/lib/pam_ldap.so	ignore_authinfo_unavail ignore_unknown_user config=/var/etc/pam_ldap.conf
 
 # session
 session		required	/usr/local/lib/pam_mkhomedir.so	umask=0077 skel=/etc/skel/ silent
@@ -2380,20 +2380,20 @@ session		sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 session		required	pam_permit.so
 
 # password
-password        sufficient      /usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
+password	sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 password	required	pam_unix.so		no_warn try_first_pass
 
 EOD;
 
 			$pam_system =<<<EOD
 # auth
-auth            sufficient      /usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
+auth		sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 auth		required	pam_unix.so		no_warn try_first_pass
 
 # account
 account		required	pam_login_access.so
-account         sufficient      pam_radius.so
-account         sufficient      /usr/local/lib/pam_ldap.so	ignore_authinfo_unavail ignore_unknown_user config=/var/etc/pam_ldap.conf
+account		sufficient	pam_radius.so
+account		sufficient	/usr/local/lib/pam_ldap.so	ignore_authinfo_unavail ignore_unknown_user config=/var/etc/pam_ldap.conf
 
 # session
 session		required	/usr/local/lib/pam_mkhomedir.so	umask=0077 skel=/etc/skel/ silent
@@ -2401,7 +2401,7 @@ session		sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 session		required	pam_lastlog.so		no_fail
 
 # password
-password        sufficient      /usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
+password	sufficient	/usr/local/lib/pam_ldap.so	config=/var/etc/pam_ldap.conf
 password	required	pam_unix.so		no_warn try_first_pass
 
 EOD;

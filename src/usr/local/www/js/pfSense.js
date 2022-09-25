@@ -247,24 +247,24 @@ $(function() {
 
 	var originalLeave = $.fn.popover.Constructor.prototype.leave;
 	$.fn.popover.Constructor.prototype.leave = function(obj){
-	  var self = obj instanceof this.constructor ?
-	    obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
-	  var container, timeout;
+		var self = obj instanceof this.constructor ?
+		obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
+		var container, timeout;
 
-	  originalLeave.call(this, obj);
+		originalLeave.call(this, obj);
 
-	  if (self.$tip && self.$tip.length) {
-	    container = self.$tip;
-	    timeout = self.timeout;
-	    container.one('mouseenter', function(){
-	      //We entered the actual popover - call off the dogs
-	      clearTimeout(timeout);
-	      //Let's monitor popover content instead
-	      container.one('mouseleave', function(){
-	        $.fn.popover.Constructor.prototype.leave.call(self, self);
-	      });
-	    })
-	  }
+		if (self.$tip && self.$tip.length) {
+		container = self.$tip;
+		timeout = self.timeout;
+		container.one('mouseenter', function(){
+			//We entered the actual popover - call off the dogs
+			clearTimeout(timeout);
+			//Let's monitor popover content instead
+			container.one('mouseleave', function(){
+			$.fn.popover.Constructor.prototype.leave.call(self, self);
+			});
+		})
+		}
 	};
 
 	// Bootstrap 3.4.1 sanitizes the contents of popovers even when data-html is specified
