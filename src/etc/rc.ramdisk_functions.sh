@@ -102,7 +102,7 @@ ramdisk_try_mount () {
 	NAME=$1
 	if [ ramdisk_check_size ]; then
 		SIZE=$(eval echo \${${NAME}size})m
-		/sbin/mount -o rw,size=${SIZE},mode=1777 -t tmpfs tmpfs /${NAME}
+		/sbin/mount -o rw,size=${SIZE},mode=1777,noatime -t tmpfs tmpfs /${NAME}
 		return $?
 	else
 		return 1;
