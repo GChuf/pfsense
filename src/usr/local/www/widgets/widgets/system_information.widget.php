@@ -387,8 +387,16 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
         if (!in_array('state_table_size', $skipsysinfoitems)):
                 $rows_displayed = true;
 
-                $pfstatetext = get_pfstate();
-                $pfstateusage = get_pfstate(true);
+				$pfstates = get_pfstate();
+				$temp = explode("/", $pfstates);
+
+				$curentries = $temp[0];
+				$maxstates = $temp[1];
+
+				$pfstateusage = round(($curentries / $maxstates) * 100, 0);
+                $pfstatetext = $pfstates;
+
+
 
                 // Calculate scaling factor
                 $adaptive = false;
@@ -651,7 +659,7 @@ function stats(x) {
         updateLoadAverage(values[8]);
         updateMbuf(values[9]);
         updateMbufMeter(values[10]);
-        updateStateMeter(values[11]);
+       // updateStateMeter(values[11]);
 }
 
 function updateMemory(x) {
@@ -758,14 +766,17 @@ function updateUptime(x) {
 }
 
 function updateState(x) {
+
+
         if ($('#pfstate')) {
                 $('[id="pfstate"]').html('(' + x + ')');
 
                 // get numeric part of string before the '/'
-                x = x.split('/')[0]
+                currentStates = x.split('/')[0];
+				maxStates= x.split('/')[1];
 
-                if (x > adaptivestart) {
-                        var scalingfactor = Math.round((adaptiveend - x) / (adaptiveend - adaptivestart) * 100);
+                if (currentStates > adaptivestart) {
+                        var scalingfactor = Math.round((adaptiveend - currentStates) / (adaptiveend - adaptivestart) * 100);
                         var disphtml =  '<br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' +
                                 state_tt +  scalingfactor + '%">' +
                                 'Scaling ' + scalingfactor + '%</a>';
@@ -786,6 +797,22 @@ function updateState(x) {
                         $('#statePB').removeClass('progress-bar-warning');
                 }
         }
+
+
+		console.log("splitting states");
+
+		percent = Math.floor(currentStates * 100/ maxStates);
+		console.log(currentStates);
+		console.log(maxStates);
+
+        if ($('#pfstateusagemeter')) {
+                $('[id="pfstateusagemeter"]').html(percent + '%');
+        }
+        if ($('#statePB')) {
+                setProgress('statePB', parseInt(percent));
+        }
+
+
 }
 
 function updateStateMeter(x) {
