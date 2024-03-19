@@ -658,7 +658,7 @@ function stats(x) {
         updateCpuFreq(values[7]);
         updateLoadAverage(values[8]);
         updateMbuf(values[9]);
-        updateMbufMeter(values[10]);
+        //updateMbufMeter(values[10]);
        // updateStateMeter(values[11]);
 }
 
@@ -674,8 +674,20 @@ function updateMemory(x) {
 }
 
 function updateMbuf(x) {
+
+		mbufsTotal = x.split('/')[0];
+		mbufsMax= x.split('/')[1];
+		percent = Math.floor(mbufsTotal * 100/ mbufsMax);
+
+
         if ($('#mbuf')) {
-                $('[id="mbuf"]').html('(' + x + ')');
+                $('[id="mbuf"]').html('(' + mbufsTotal + '/' + mbufsMax + ')');
+        }
+		if ($('#mbufusagemeter')) {
+                $('[id="mbufusagemeter"]').html(percent + '%');
+        }
+        if ($('#mbufPB')) {
+                setProgress('mbufPB', parseInt(percent));
         }
 }
 
@@ -802,8 +814,8 @@ function updateState(x) {
 		console.log("splitting states");
 
 		percent = Math.floor(currentStates * 100/ maxStates);
-		console.log(currentStates);
-		console.log(maxStates);
+		//console.log(currentStates);
+		//console.log(maxStates);
 
         if ($('#pfstateusagemeter')) {
                 $('[id="pfstateusagemeter"]').html(percent + '%');

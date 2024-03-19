@@ -37,13 +37,8 @@ function get_stats($sitems = array()) {
 	$stats['datetime'] = (!in_array('current_datetime', $sitems)) ? update_date_time() : '';
 	$stats['cpufreq'] = (!in_array('cpu_type', $sitems)) ? get_cpufreq() : '';
 	$stats['load_average'] = (!in_array('load_average', $sitems)) ? get_load_average() : '';
-	if (!in_array('mbuf_usage', $sitems)) {
-		get_mbuf($stats['mbuf'], $stats['mbufpercent']);
-	} else {
-		$stats['mbuf'] = '';
-		$stats['mbufpercent'] = '';
-	}
-	//$stats['statepercent'] = (!in_array('state_table_size', $sitems)) ? get_pfstate(true) : '';
+	$stats['mbuf_usage'] = (!in_array('mbuf_usage', $sitems)) ? get_mbuf() : '';
+
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -124,11 +119,11 @@ function get_hwtype() {
 	return;
 }
 
-function get_mbuf(&$mbuf, &$mbufpercent) {
+function get_mbuf() {
 	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters" | /usr/bin/awk '{ print $1 }'`);
 	list($mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max) = explode("/", $mbufs_output);
-	$mbuf = "{$mbufs_total}/{$mbufs_max}";
-	$mbufpercent = ($mbufs_max > 0) ? round(($mbufs_total / $mbufs_max) * 100, 0) : "NA";
+	//$mbuf = "{$mbufs_total}/{$mbufs_max}";
+	return $mbufs_total . "/" . $mbufs_max;
 }
 
 function get_temp() {
