@@ -31,7 +31,7 @@ function get_stats($sitems = array()) {
 	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
 	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
-	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';
+	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_time_sec() : '';
 	$stats['states'] = (!in_array('state_table_size', $sitems)) ? get_pfstate() : '';
 	$stats['temp'] = (!in_array('temperature', $sitems)) ? get_temp() : '';
 	$stats['datetime'] = (!in_array('current_datetime', $sitems)) ? update_date_time() : '';
@@ -49,7 +49,7 @@ function get_stats($sitems = array()) {
 }
 
 function get_uptime() {
-	$uptime = get_uptime_sec_from_cache();
+	$uptime = get_time_sec();
 
 	if (intval($uptime) == 0) {
 		return;
@@ -221,14 +221,7 @@ function update_date_time() {
 }
 
 function get_cpufreq() {
-	$out = "";
-	$curfreq = "";
-	$maxfreq = g_get('cache_cpu_max_speed');
-	$curfreq = get_single_sysctl('dev.cpu.0.freq');
-	if ($curfreq > 0) {
-		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
-	}
-	return $out;
+	return get_single_sysctl('dev.cpu.0.freq');
 }
 
 define("INTEL_C2000_IQIA_PHYS", "0x1f188086");

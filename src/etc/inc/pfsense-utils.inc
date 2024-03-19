@@ -1823,6 +1823,10 @@ function get_uptime_sec() {
 	return $uptime;
 }
 
+function get_time_sec(){
+	return time();
+}
+
 function get_uptime_sec_from_cache() {
 	$boottime = "";
 	$boottime = g_get('cache_boot_time');
@@ -1831,7 +1835,7 @@ function get_uptime_sec_from_cache() {
 		return 0;
 	}
 
-	$uptime = time() - $boottime;
+	$uptime = time();
 	return $uptime;
 }
 
