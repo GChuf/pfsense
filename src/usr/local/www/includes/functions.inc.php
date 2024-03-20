@@ -24,14 +24,14 @@ if (Connection_Aborted()) {
 	exit;
 }
 
-require_once("config.inc");
-require_once("pfsense-utils.inc");
+//require_once("config.inc");
+//require_once("pfsense-utils.inc");
 
 function get_stats($sitems = array()) {
 	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
 	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
-	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_time_sec() : '';
+	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_time_sec1() : '';
 	$stats['states'] = (!in_array('state_table_size', $sitems)) ? get_pfstate() : '';
 	$stats['temp'] = (!in_array('temperature', $sitems)) ? get_temp() : '';
 	$stats['datetime'] = (!in_array('current_datetime', $sitems)) ? update_date_time() : '';
@@ -43,8 +43,12 @@ function get_stats($sitems = array()) {
 	return $stats;
 }
 
+
+function get_time_sec1() {
+	return time();
+}
 function get_uptime() {
-	$uptime = get_time_sec();
+	$uptime = time();
 
 	if (intval($uptime) == 0) {
 		return;
@@ -85,7 +89,7 @@ function get_uptime() {
 function cpu_usage() {
 
 	$diff = array('user', 'nice', 'sys', 'intr', 'idle');
-	$cpuTicks = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
+	$cpuTicks = array_combine($diff, explode(" ", shell_exec('sysctl -n kern.cp_time')));
 
 	return array_sum($cpuTicks) . "|" . $cpuTicks['idle'];
 }
@@ -96,7 +100,7 @@ function get_pfstate() {
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
 		$maxstates="{$config['system']['maximumstates']}";
 	} else {
-		$maxstates=pfsense_default_state_size();
+		$maxstates=100000099;
 	}
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
@@ -120,16 +124,16 @@ function get_hwtype() {
 }
 
 function get_mbuf() {
-	$mbufs_output=trim(`/usr/bin/netstat -mb | /usr/bin/grep "mbuf clusters" | /usr/bin/awk '{ print $1 }'`);
+	$mbufs_output=trim(`/usr/bin/netstat -m | /usr/bin/grep "mbuf clusters" | /usr/bin/awk '{ print $1 }'`);
 	list($mbufs_current, $mbufs_cache, $mbufs_total, $mbufs_max) = explode("/", $mbufs_output);
 	//$mbuf = "{$mbufs_total}/{$mbufs_max}";
 	return $mbufs_total . "/" . $mbufs_max;
 }
 
 function get_temp() {
-	$temp_out = get_single_sysctl("dev.cpu.0.temperature");
+	$temp_out = shell_exec("sysctl -n dev.cpu.0.temperature");
 	if ($temp_out == "") {
-		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
+		$temp_out = shell_exec("sysctl -n hw.acpi.thermal.tz0.temperature");
 	}
 
 	// Remove 'C' from the end and spaces
@@ -189,9 +193,9 @@ function mem_usage() {
 	if (is_numeric($totalMem)) {
 		/* Include inactive and laundry with free memory since they
 		 * could be freed under pressure. */
-		$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");
-		$laundryMem = (int) get_single_sysctl("vm.stats.vm.v_laundry_count");
-		$freeMem = (int) get_single_sysctl("vm.stats.vm.v_free_count");
+		$inactiveMem = (int) shell_exec("sysctl -n vm.stats.vm.v_inactive_count");
+		$laundryMem = (int) shell_exec("sysctl -n vm.stats.vm.v_laundry_count");
+		$freeMem = (int) shell_exec("sysctl -n vm.stats.vm.v_free_count");
 		if (is_numeric($inactiveMem) &&
 		    is_numeric($laundryMem) &&
 		    is_numeric($freeMem)) {
@@ -208,7 +212,7 @@ function update_date_time() {
 }
 
 function get_cpufreq() {
-	return get_single_sysctl('dev.cpu.0.freq');
+	return shell_exec('sysctl -n dev.cpu.0.freq');
 }
 
 define("INTEL_C2000_IQIA_PHYS", "0x1f188086");
@@ -229,7 +233,7 @@ function crypto_accel_new($name = "", $algs = "") {
 }
 
 function crypto_accel_init() {
-	$machine = get_single_sysctl('hw.machine');
+	$machine = shell_exec('sysctl -n hw.machine');
 
 	/* Defaults */
 	$crypto = array();
@@ -307,7 +311,7 @@ function crypto_accel_get_algs($crypto) {
 
 function get_cpu_crypto_support() {
 	global $g;
-	$machine = get_single_sysctl('hw.machine');
+	$machine = shell_exec('sysctl -n hw.machine');
 	$QATIDS = array(INTEL_C2000_IQIA_PHYS, INTEL_C3K_QAT, INTEL_C3K_QAT_VF, INTEL_C620_QAT, INTEL_C620_QAT_VF,
 			INTEL_XEOND_QAT, INTEL_XEOND_QAT_VF, INTEL_DH895XCC_QAT, INTEL_DH895XCC_QAT_VF);
 
@@ -348,7 +352,7 @@ function get_cpu_crypto_support() {
 }
 
 function get_cpu_crypto_string($crypto) {
-	$machine = get_single_sysctl('hw.machine');
+	$machine = shell_exec('sysctl -n hw.machine');
 	$string = "";
 
 	switch ($machine) {
@@ -379,7 +383,7 @@ function get_cpu_crypto_string($crypto) {
 }
 
 function get_cpu_count($show_detail = false) {
-	$cpucount = get_single_sysctl('kern.smp.cpus');
+	$cpucount = shell_exec('sysctl -n kern.smp.cpus');
 
 	if ($show_detail) {
 		$cpudetail = "";
