@@ -29,9 +29,10 @@
 ##|*MATCH=getstats.php*
 ##|-PRIV
 
-header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
-header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
-header("Cache-Control: no-cache, no-store, must-revalidate");
+//header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
+//header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
+//header("Cache-Control: no-cache, no-store, must-revalidate");
+header('Content-Type: text/plain');
 
 require_once("auth_check.inc");
 include_once("includes/functions.inc.php");
