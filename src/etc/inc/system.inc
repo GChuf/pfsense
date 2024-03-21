@@ -1382,6 +1382,11 @@ EOD;
 
 	$nginx_config .= <<<EOD
 
+upstream pfp-fpm {
+	unix:{$g['varrun_path']}/php-fpm.socket;
+	keepalive 8;
+}
+
 events {
     worker_connections  1024;
 }
@@ -1392,7 +1397,7 @@ http {
 	add_header X-Frame-Options SAMEORIGIN;
 	server_tokens off;
 
-	sendfile        off;
+	sendfile        on;
 
 	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 
@@ -1479,7 +1484,8 @@ EOD;
 			try_files \$uri =404; #  This line closes a potential security hole
 			# ensuring users can't execute uploaded files
 			# see: https://forum.nginx.org/read.php?2,88845,page=3
-			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
+			fastcgi_pass phpfpm-socket;
+			fastcgi_keep_conn on;
 			fastcgi_index  index.php;
 			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
@@ -1490,7 +1496,7 @@ EOD;
 		location ~ (^/status$) {
 			allow 127.0.0.1;
 			deny all;
-			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
+			fastcgi_pass   phpfpm-socket;
 			fastcgi_index  index.php;
 			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
