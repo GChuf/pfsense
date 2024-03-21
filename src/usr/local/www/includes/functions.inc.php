@@ -100,7 +100,9 @@ function get_pfstate() {
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0) {
 		$maxstates="{$config['system']['maximumstates']}";
 	} else {
-		$maxstates=100000099;
+		$physmem = g_get('cache_hw_real_mem');
+		/* Default is 10% of system memory to the state table */
+		$maxstates = (int) ($physmem/10)*1000;
 	}
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
