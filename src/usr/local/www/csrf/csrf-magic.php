@@ -236,7 +236,7 @@ function csrf_get_tokens() {
     if ($GLOBALS['csrf']['cookie']) {
         $val = csrf_generate_secret();
         setcookie($GLOBALS['csrf']['cookie'], $val);
-        return 'cookie:' . csrf_hash($val) . $ip;
+        return 'cookie:' . csrf_hash($val) . $ip . 'idiot';
     }
     if ($GLOBALS['csrf']['key']) return 'key:' . csrf_hash($GLOBALS['csrf']['key']) . $ip;
     // These further algorithms require a server-side secret
