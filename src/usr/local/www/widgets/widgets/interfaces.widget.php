@@ -50,6 +50,10 @@ if ($_POST['widgetkey'] && !$_REQUEST['ajax']) {
 	header("Location: /index.php");
 }
 
+if ($_POST['widgetkey'] && $_REQUEST['ajax']) {
+	header('Content-Type: text/plain');
+}
+
 // When this widget is included in the dashboard, $widgetkey is already defined before the widget is included.
 // When the ajax call is made to refresh the interfaces table, 'widgetkey' comes in $_REQUEST.
 if ($_REQUEST['widgetkey']) {
