@@ -319,7 +319,7 @@ if (!$_REQUEST['ajax']) {
 			<td><i class="<?=$resultent['iconfn']?>" style="cursor: pointer;" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$resultent['rulenum']},{$resultent['tracker']},{$resultent['act']}"; ?>', outputrule);"
 			title="<?=gettext("Rule that triggered this action: ") . htmlspecialchars($resultent['rule'])?>">
 			</a></td>
-			<td title="<?=htmlspecialchars($resultent['time'])?>"><?=htmlspecialchars($resultent['time'])?></td>
+			<td><?=$resultent['time']?></td>
 			<td><?=htmlspecialchars($resultent['interface']);?></td>
 			<td><a href="diag_dns.php?host=<?=$resultent['srcip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$resultent['srcIP']?></a>
@@ -327,7 +327,7 @@ if (!$_REQUEST['ajax']) {
 			<td><a href="diag_dns.php?host=<?=$resultent['dstip']?>"
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$resultent['dstIP']?></a><?php
 				if ($resultent['dstport']) {
-					print ':' . htmlspecialchars($resultent['dstport']);
+					print ':' . $resultent['dstport'];
 				}
 				?>
 			</td>
