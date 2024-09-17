@@ -208,17 +208,14 @@ if (!$_REQUEST['ajax']) {
 	$norules = 0;
 	foreach ($rule_lines as $someline):
 
-		// position 0 is the first position
-		$firstcha = substr($someline, 0, 1);
-		// we are only intrested in lines starting "@"
-		if ($firstcha == "@") {
-			$rulekeys[] = array(
-				'rulenum' => substr($someline, 1, strpos($someline, ' ')),
-				'rawidx'  => $idx,
-			);
+		$rulekeys[] = array(
+			'rulenum' => substr($someline, 1, strpos($someline, ' ')),
+			'rawidx'  => $idx,
+		);
+
 		$norules++;
-		}
-		 $idx++;
+		$idx++;
+
 	endforeach;
 
 //DEBUG:	$date2 = new DateTime($date);
