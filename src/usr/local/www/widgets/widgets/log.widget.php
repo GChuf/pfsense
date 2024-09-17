@@ -228,6 +228,10 @@ if (!$_REQUEST['ajax']) {
 		if ($filterent['version'] == '6') {
 			$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
 			$dstIP = "[" . htmlspecialchars($filterent['dstip']) . "]";
+
+			// Putting <wbr> tags after each ':' allows the string to word-wrap at that point
+			$srcIP = str_replace(':', ':<wbr>', $srcIP);
+			$dstIP = str_replace(':', ':<wbr>', $dstIP);
 		} else {
 			$srcIP = htmlspecialchars($filterent['srcip']);
 			$dstIP = htmlspecialchars($filterent['dstip']);
@@ -251,10 +255,6 @@ if (!$_REQUEST['ajax']) {
 //DEBUG:		$date2 = new DateTime($date);
 //DEBUG:		$timediff = date_mdiff($date1, $date2);
 //DEBUG:		$logContent .= date($dateFormat)."_Rule lookup did take: ".$timediff.PHP_EOL;
-
-		// Putting <wbr> tags after each ':' allows the string to word-wrap at that point
-		$srcIP = str_replace(':', ':<wbr>', $srcIP);
-		$dstIP = str_replace(':', ':<wbr>', $dstIP);
 
 		// Log what is entered in the 'filterend array' (for debug purposes)
 //DEBUG:	$logContent .= date($dateFormat)."_INTO_ResultArray Act:".$filterent['act']." Time:".$filterent['time']." Interface:".$filterent['interface'].PHP_EOL;
