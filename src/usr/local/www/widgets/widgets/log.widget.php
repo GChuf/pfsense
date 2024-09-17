@@ -142,6 +142,42 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 250, $filterfieldsarray
 $widgetkey_nodash = str_replace("-", "", $widgetkey);
 //DEBUG: $logContent .= date($dateFormat)."_After widgetkey_nodash".PHP_EOL;
 
+// Fetch defined rules from 'pfctl'
+
+$date1 = new DateTime($date);
+
+$cmdtoexecute="/sbin/pfctl -vvPsr | grep ^@" ;
+$thefile = shell_exec($cmdtoexecute);
+
+if ($DebugOn) {
+	$date2 = new DateTime($date);
+	$timediff = date_mdiff($date1, $date2);
+	$logContent .= date($dateFormat)."_Fetching pfctl output did take: ".$timediff.PHP_EOL;
+}
+
+// Place fetched rules in the '$rule_lines' array
+
+//DEBUG:	$date1 = new DateTime($date);
+$rule_lines = explode("\n", $thefile, -1);
+
+// Create 'rule key array' in favor of rule lookups
+$date1 = new DateTime($date);
+
+// array index start with 0
+$idx = 0;
+$norules = 0;
+foreach ($rule_lines as $someline):
+
+	$rulekeys[] = array(
+		'rulenum' => substr($someline, 1, strpos($someline, ' ')),
+		'rawidx'  => $idx,
+	);
+
+	$norules++;
+	$idx++;
+
+endforeach;
+
 if (!$_REQUEST['ajax']) {
 ?>
 <script type="text/javascript">
@@ -165,23 +201,7 @@ if (!$_REQUEST['ajax']) {
 	<tbody>
 <?php
 
-	// Fetch defined rules from 'pfctl'
 
-	$date1 = new DateTime($date);
-
-	$cmdtoexecute="/sbin/pfctl -vvPsr | grep ^@" ;
-	$thefile = shell_exec($cmdtoexecute);
-
-	if ($DebugOn) {
-		$date2 = new DateTime($date);
-		$timediff = date_mdiff($date1, $date2);
-		$logContent .= date($dateFormat)."_Fetching pfctl output did take: ".$timediff.PHP_EOL;
-	}
-
-	// Place fetched rules in the '$rule_lines' array
-
-//DEBUG:	$date1 = new DateTime($date);
-	$rule_lines = explode("\n", $thefile, -1);
 
 //DEBUG:	$date2 = new DateTime($date);
 //DEBUG:	$timediff = date_mdiff($date1, $date2);
@@ -200,23 +220,7 @@ if (!$_REQUEST['ajax']) {
 	@2060 anchor "tftp-proxy/*" all
 */
 
-	// Create 'rule key array' in favor of rule lookups
-	$date1 = new DateTime($date);
 
-	// array index start with 0
-	$idx = 0;
-	$norules = 0;
-	foreach ($rule_lines as $someline):
-
-		$rulekeys[] = array(
-			'rulenum' => substr($someline, 1, strpos($someline, ' ')),
-			'rawidx'  => $idx,
-		);
-
-		$norules++;
-		$idx++;
-
-	endforeach;
 
 //DEBUG:	$date2 = new DateTime($date);
 //DEBUG:	$timediff = date_mdiff($date1, $date2);
@@ -263,6 +267,7 @@ if (!$_REQUEST['ajax']) {
 
 //DEBUG:		$date1 = new DateTime($date);
 
+/*
 		$rule = "no rule info available";
 		foreach ($rulekeys as $actrule):
 			if ($actrule['rulenum'] == $filterent['rulenum']) {
@@ -271,6 +276,7 @@ if (!$_REQUEST['ajax']) {
 			break;
 			}
 		endforeach;
+*/
 
 //DEBUG:	$date2 = new DateTime($date);
 //DEBUG:	$timediff = date_mdiff($date1, $date2);
@@ -296,7 +302,7 @@ if (!$_REQUEST['ajax']) {
 		'dstport'=> $filterent['dstport'],
 		'srcIP' => $srcIP,
 		'dstIP' => $dstIP,
-		'rule' => $rule,
+		'rule' => $dstIP
 	);
 
 //DEBUG: $logContent .= date($dateFormat)."_After adding enty to resultarray".PHP_EOL;
