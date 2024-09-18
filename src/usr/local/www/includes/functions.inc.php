@@ -512,23 +512,27 @@ function get_interfacestatus() {
 function sockets_usage() {
 
 	$socketsUsed = shell_exec("sockstat | wc -l | awk '{print $1}'");
-	$socketsMax = shell_exec("sysctl -n kern.ipc.maxsockets");
+	//$socketsMax = shell_exec("sysctl -n kern.ipc.maxsockets");
+	$socketsMax = get_single_sysctl("kern.ipc.maxsockets");
 	return $socketsUsed;
 }
 
 function file_descriptors_used() {
-	$fileDescriptorsUsed = shell_exec("sysctl -n kern.openfiles");
+	//$fileDescriptorsUsed = shell_exec("sysctl -n kern.openfiles");
+	$fileDescriptorsUsed = get_single_sysctl("kern.openfiles");
 	return $fileDescriptorsUsed;
 }
 
 function file_descriptors_max() {
-	$fileDescriptorsMax = shell_exec("sysctl -n kern.maxfiles");
+	//$fileDescriptorsMax = shell_exec("sysctl -n kern.maxfiles");
+	$fileDescriptorsMax = get_single_sysctl("kern.maxfiles");
 	return $fileDescriptorsMax;
 }
 
 function pipes_usage() {
 	$pipesUsed = shell_exec("fstat | grep pipe | wc -l | awk '{print $1}'");
-	$pipesMax = shell_exec("sysctl -n kern.ipc.maxpipekva", );
+	//$pipesMax = shell_exec("sysctl -n kern.ipc.maxpipekva");
+	$pipesMax = get_single_sysctl("kern.ipc.maxpipekva");
 	return $pipesUsed;
 }
 

@@ -472,17 +472,6 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<?php endif; ?>
 <?php
 	endif;
-	if (!in_array('load_average', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Load average");?></th>
-			<td>
-				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
-			</td>
-		</tr>
-<?php
-	endif;
 	if (!in_array('cpu_usage', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
@@ -494,6 +483,39 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					</div>
 				</div>
 				<span id="cpumeter"><?=sprintf(gettext("Retrieving CPU data %s"), "<i class=\"fa-solid fa-gear fa-spin\"></i>")?></span>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('load_average', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Load average");?></th>
+			<td>
+				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('cpu_interrupts', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("CPU Interrupts");?></th>
+			<td>
+				<div id="cpu_interrupts" title="<?=gettext('CPU interrupts')?>"><?= cpu_interrupts(); ?></div>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('context_switches', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Context Switches");?></th>
+			<td>
+				<div id="context_switches" title="<?=gettext('Context Switches')?>"><?= context_switches(); ?></div>
 			</td>
 		</tr>
 <?php
@@ -584,28 +606,6 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					</div>
 				</div>
 				<span id="pipesUsageMeter"><?=$pipesUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('cpu_interrupts', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("CPU Interrupts");?></th>
-			<td>
-				<div id="cpu_interrupts" title="<?=gettext('CPU interrupts')?>"><?= cpu_interrupts(); ?></div>
-			</td>
-		</tr>
-<?php
-	endif;
-	if (!in_array('context_switches', $skipsysinfoitems)):
-		$rows_displayed = true;
-?>
-		<tr>
-			<th><?=gettext("Context Switches");?></th>
-			<td>
-				<div id="load_average" title="<?=gettext('Context Switches')?>"><?= context_switches(); ?></div>
 			</td>
 		</tr>
 <?php
