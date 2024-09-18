@@ -44,6 +44,12 @@ function get_stats($sitems = array()) {
 		$stats['mbufpercent'] = '';
 	}
 	$stats['statepercent'] = (!in_array('state_table_size', $sitems)) ? get_pfstate(true) : '';
+
+	$stats['sockets_usage'] = (!in_array('sockets_usage', $sitems)) ? sockets_usage() : '';
+	$stats['file_descriptors'] = (!in_array('file_descriptors', $sitems)) ? file_descriptors_used() : '';
+	$stats['pipes_usage'] = (!in_array('pipes_usage', $sitems)) ? pipes_usage() : '';
+	$stats['cpu_interrupts']= (!in_array('cpu_interrupts', $sitems)) ? cpu_interrupts() : '';
+
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -500,5 +506,43 @@ function get_interfacestatus() {
 	}
 	return $data;
 }
+
+//calculate interrupts and context switches per second ... ???
+
+function sockets_usage() {
+
+	$socketsUsed = shell_exec("sockstat | wc -l | awk '{print $1}'");
+	$socketsMax = shell_exec("sysctl -n kern.ipc.maxsockets");
+	return $socketsUsed;
+}
+
+function file_descriptors_used() {
+	$fileDescriptorsUsed = shell_exec("sysctl -n kern.openfiles");
+	return $fileDescriptorsUsed;
+}
+
+function file_descriptors_max() {
+	$fileDescriptorsMax = shell_exec("sysctl -n kern.maxfiles");
+	return $fileDescriptorsMax;
+}
+
+function pipes_usage() {
+	$pipesUsed = shell_exec("fstat | grep pipe | wc -l | awk '{print $1}'");
+	$pipesMax = shell_exec("sysctl -n kern.ipc.maxpipekva", );
+	return $pipesUsed;
+}
+
+function cpu_interrupts() {
+	//vmstat -s -- device + software interrupts
+	$totalCpuInterrupts = shell_exec("vmstat -i | grep Total | awk '{print $2}'");
+	$averageCpuInterrupts = shell_exec("vmstat -i | grep Total | awk '{print $3}'");
+	return $totalCpuInterrupts;
+}
+
+function context_switches() {
+	$contextSwitches = shell_exec("vmstat -s | grep context | awk '{print $1}'");
+	return $contextSwitches;
+}
+
 
 ?>

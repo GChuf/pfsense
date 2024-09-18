@@ -49,10 +49,15 @@ $sysinfo_items = array(
 	'state_table_size' => gettext('State Table Size'),
 	'mbuf_usage' => gettext('MBUF Usage'),
 	'temperature' => gettext('Temperature'),
-	'load_average' => gettext('Load Average'),
 	'cpu_usage' => gettext('CPU Usage'),
+	'load_average' => gettext('Load Average'),
+	'cpu_interrupts' => gettext('CPU Interrupts'),
+	'context_switches' => gettext('Context Switches'),
 	'memory_usage' => gettext('Memory Usage'),
-	'swap_usage' => gettext('Swap Usage')
+	'swap_usage' => gettext('Swap Usage'),
+	'file_descriptors' => gettext('File Descriptors'),
+	'sockets_usage' => gettext('Sockets Usage'),
+	'pipes_usage' => gettext('Pipes Usage')
 	);
 
 // Declared here so that JavaScript can access it
@@ -529,6 +534,82 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 <?php
 	endif;
+	if (!in_array('sockets_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Sockets Usage");?></th>
+			<td>
+				<?php $socketsUsage = sockets_usage(); ?>
+
+				<div class="progress" >
+					<div id="socketsUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+					</div>
+				</div>
+				<span id="socketsUsageMeter"><?=$socketsUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('file_descriptors', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("File Descriptors");?></th>
+			<td>
+				<?php $fileDescriptorsUsed = file_descriptors_used(); ?>
+				<?php $fileDescriptorsMax = file_descriptors_max(); ?>
+				<?php $fileDescriptorsUsage = round(($fileDescriptorsUsed / $fileDescriptorsMax), 0); ?>
+				<div class="progress" >
+					<div id="fileDescriptorsPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fileDescriptorsUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fileDescriptorsUsage?>%">
+					<!--<div id="fileDescriptorsPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fileDescriptorsUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fileDescriptorsUsage?>%">-->
+
+					</div>
+				</div>
+				<span><?=$fileDescriptorsUsage?>% (</span><span id="fileDescriptorsMeter"><?=$fileDescriptorsUsed?></span><span> of <?=$fileDescriptorsMax?>)</span>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('pipes_usage', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Pipes Usage");?></th>
+			<td>
+				<?php $pipesUsage = pipes_usage(); ?>
+
+				<div class="progress" >
+					<div id="pipesUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+					</div>
+				</div>
+				<span id="pipesUsageMeter"><?=$pipesUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('cpu_interrupts', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("CPU Interrupts");?></th>
+			<td>
+				<div id="cpu_interrupts" title="<?=gettext('CPU interrupts')?>"><?= cpu_interrupts(); ?></div>
+			</td>
+		</tr>
+<?php
+	endif;
+	if (!in_array('context_switches', $skipsysinfoitems)):
+		$rows_displayed = true;
+?>
+		<tr>
+			<th><?=gettext("Context Switches");?></th>
+			<td>
+				<div id="load_average" title="<?=gettext('Context Switches')?>"><?= context_switches(); ?></div>
+			</td>
+		</tr>
+<?php
+	endif;
 	if (!$rows_displayed):
 ?>
 		<tr>
@@ -633,6 +714,10 @@ function stats(x) {
 	updateMbuf(values[9]);
 	updateMbufMeter(values[10]);
 	updateStateMeter(values[11]);
+	updateSocketsUsage(values[12]);
+	updateFileDescriptors(values[13]);
+	updatePipesUsage(values[14]);
+	updateCpuInterrupts(values[15]);
 }
 
 function updateMemory(x) {
@@ -758,6 +843,39 @@ function updateLoadAverage(x) {
 	}
 }
 
+function updateSocketsUsage(x) {
+	if ($('#sockets_usage')) {
+		$('[id="sockets_usage"]').html(x);
+	}
+	if ($('#socketsUsagePB')) {
+		setProgress('socketsUsagePB', parseInt(x));
+	}
+}
+
+function updateFileDescriptors() {
+	if ($('#file_descriptors')) {
+		$('[id="file_descriptors"]').html(x);
+	}
+	if ($('#fileDescriptorsPB')) {
+		setProgress('fileDescriptorsPB', parseInt(x/514059));
+	}
+}
+
+function updatePipesUsage(x) {
+	if ($('#pipes_usage')) {
+		$('[id="pipes_usage"]').html(x);
+	}
+	if ($('#pipesUsagePB')) {
+		setProgress('pipesUsagePB', parseInt(x));
+	}
+}
+
+function updateCpuInterrupts(x) {
+	if ($('#cpu_interrupts')) {
+		$('[id="cpu_interrupts"]').html(x);
+	}
+}
+
 function widgetActive(x) {
 	var widget = $('#' + x + '-container');
 	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none")) {
@@ -798,7 +916,7 @@ events.push(function() {
 	metersObject.url = "/getstats.php";
 	metersObject.callback = meters_callback;
 	metersObject.parms = postdata;
-	metersObject.freq = 1;
+	metersObject.freq = 10;
 
 	// Register the AJAX object
 	register_ajax(metersObject);
