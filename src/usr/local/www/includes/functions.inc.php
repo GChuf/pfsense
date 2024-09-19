@@ -49,6 +49,7 @@ function get_stats($sitems = array()) {
 	$stats['file_descriptors'] = (!in_array('file_descriptors', $sitems)) ? file_descriptors_used() : '';
 	$stats['pipes_usage'] = (!in_array('pipes_usage', $sitems)) ? pipes_usage() : '';
 	$stats['cpu_interrupts']= (!in_array('cpu_interrupts', $sitems)) ? cpu_interrupts() : '';
+	$stats['context_switches']= (!in_array('context_switches', $sitems)) ? context_switches() : '';
 
 	$stats = join("|", $stats);
 	return $stats;
@@ -517,23 +518,44 @@ function sockets_usage() {
 	return $socketsUsed;
 }
 
+function sockets_used() {
+
+	//$socketsUsed = shell_exec("sockstat | wc -l | awk '{print $1}'");
+	$socketsUsed = shell_exec("sockstat | wc -l");
+	//$socketsMax = shell_exec("sysctl -n kern.ipc.maxsockets");
+	//$socketsMax = get_single_sysctl("kern.ipc.maxsockets");
+	return trim($socketsUsed);
+}
+
 function file_descriptors_used() {
 	//$fileDescriptorsUsed = shell_exec("sysctl -n kern.openfiles");
 	$fileDescriptorsUsed = get_single_sysctl("kern.openfiles");
 	return $fileDescriptorsUsed;
 }
 
-function file_descriptors_max() {
-	//$fileDescriptorsMax = shell_exec("sysctl -n kern.maxfiles");
-	$fileDescriptorsMax = get_single_sysctl("kern.maxfiles");
-	return $fileDescriptorsMax;
+function file_descriptors_usage() {
+	//$fileDescriptorsUsed = shell_exec("sysctl -n kern.openfiles");
+	$fileDescriptorsUsed = get_single_sysctl("kern.openfiles");
+	return $fileDescriptorsUsed;
+}
+
+function file_descriptors() {
+	$fileDescriptorsUsed = get_single_sysctl("kern.openfiles");
+	return $fileDescriptorsUsed;
 }
 
 function pipes_usage() {
-	$pipesUsed = shell_exec("fstat | grep pipe | wc -l | awk '{print $1}'");
+	//$pipesUsed = shell_exec("fstat | grep pipe | wc -l | awk '{print $1}'");
+	$pipesUsed = shell_exec("fstat | grep pipe | wc -l");
+
 	//$pipesMax = shell_exec("sysctl -n kern.ipc.maxpipekva");
-	$pipesMax = get_single_sysctl("kern.ipc.maxpipekva");
-	return $pipesUsed;
+	//$pipesMax = get_single_sysctl("kern.ipc.maxpipekva");
+	return trim($pipesUsed);
+}
+
+function pipes_used() {
+	$pipesUsed = shell_exec("fstat | grep pipe | wc -l | awk '{print $1}'");
+	return trim($pipesUsed);
 }
 
 function cpu_interrupts() {

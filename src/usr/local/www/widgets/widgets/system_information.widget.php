@@ -64,6 +64,12 @@ $sysinfo_items = array(
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-cog fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
+// static values, get these only once at first load
+//$max_mem = get_single_sysctl('hw.physmem') / (1024*1024)
+$socketsMax = get_single_sysctl("kern.ipc.maxsockets");
+$fileDescriptorsMax = get_single_sysctl("kern.maxfiles");
+$pipesMax = get_single_sysctl("kern.ipc.maxpipekva");
+
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
@@ -504,7 +510,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("CPU Interrupts");?></th>
 			<td>
-				<div id="cpu_interrupts" title="<?=gettext('CPU interrupts')?>"><?= cpu_interrupts(); ?></div>
+			<span id="cpu_interrupts"><?=sprintf(gettext("Retrieving data"), "<i class=\"fa-solid fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -515,7 +521,8 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Context Switches");?></th>
 			<td>
-				<div id="context_switches" title="<?=gettext('Context Switches')?>"><?= context_switches(); ?></div>
+				<!--<div id="context_switches" title="<?=gettext('Context Switches')?>"><?= context_switches(); ?></div>-->
+				<span id="context_switches"><?=sprintf(gettext("Retrieving data"), "<i class=\"fa-solid fa-gear fa-spin\"></i>")?></span>
 			</td>
 		</tr>
 <?php
@@ -562,13 +569,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Sockets Usage");?></th>
 			<td>
-				<?php $socketsUsage = sockets_usage(); ?>
-
+				<?php $socketsUsed = sockets_used(); ?>
+				<?php $socketsUsage = round(($socketsUsed / $socketsMax), 0); ?>
 				<div class="progress" >
-					<div id="socketsUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+					<div id="socketsUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$socketsUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$socketsUsage?>%">
 					</div>
 				</div>
-				<span id="socketsUsageMeter"><?=$socketsUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+				<span><?=$socketsUsage?>% (</span><span id="fileDescriptorsMeter"><?=$socketsUsed?></span><span>/<?=$socketsMax?>)</span>
 			</td>
 		</tr>
 <?php
@@ -580,7 +587,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 			<th><?=gettext("File Descriptors");?></th>
 			<td>
 				<?php $fileDescriptorsUsed = file_descriptors_used(); ?>
-				<?php $fileDescriptorsMax = file_descriptors_max(); ?>
+
 				<?php $fileDescriptorsUsage = round(($fileDescriptorsUsed / $fileDescriptorsMax), 0); ?>
 				<div class="progress" >
 					<div id="fileDescriptorsPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fileDescriptorsUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fileDescriptorsUsage?>%">
@@ -588,7 +595,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 
 					</div>
 				</div>
-				<span><?=$fileDescriptorsUsage?>% (</span><span id="fileDescriptorsMeter"><?=$fileDescriptorsUsed?></span><span> of <?=$fileDescriptorsMax?>)</span>
+				<span><?=$fileDescriptorsUsage?>% (</span><span id="fileDescriptorsMeter"><?=$fileDescriptorsUsed?></span><span>/<?=$fileDescriptorsMax?>)</span>
 			</td>
 		</tr>
 <?php
@@ -599,13 +606,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Pipes Usage");?></th>
 			<td>
-				<?php $pipesUsage = pipes_usage(); ?>
-
+				<?php $pipesUsed = pipes_used(); ?>
+				<?php $pipesUsage = round(($pipesUsed / $pipesMax), 0); ?>
 				<div class="progress" >
-					<div id="pipesUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+					<div id="pipesUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$pipesUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pipesUsage?>%">
 					</div>
 				</div>
-				<span id="pipesUsageMeter"><?=$pipesUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+				<span><?=$pipesUsage?>% (</span><span id="fileDescriptorsMeter"><?=$pipesUsed?></span><span>/<?=$pipesMax?>)</span>
 			</td>
 		</tr>
 <?php
@@ -671,6 +678,9 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 var lastTotal = 0;
 var lastUsed = 0;
 
+var lastContextSwitchTotal = 0;
+var lastInterruptsTotal = 0;
+
 // Collect some PHP values required by the states calculation
 <?php if (!in_array('state_table_size', $skipsysinfoitems)): ?>
 var adaptiveend = <?=$adaptiveend?>;
@@ -704,6 +714,18 @@ function stats(x) {
 		updateCPU(values[0], values[1]);
 	}
 
+	if (lastInterruptsTotal === 0) {
+		lastInterruptsTotal = values[15];
+	} else {
+		updateCPUInterrupts(values[15]);
+	}
+
+	if (lastContextSwitchTotal === 0) {
+		lastContextSwitchTotal = values[16];
+	} else {
+		updateContextSwitches(values[16]);
+	}
+
 	updateUptime(values[3]);
 	updateDateTime(values[6]);
 	updateMemory(values[2]);
@@ -714,10 +736,9 @@ function stats(x) {
 	updateMbuf(values[9]);
 	updateMbufMeter(values[10]);
 	updateStateMeter(values[11]);
-	updateSocketsUsage(values[12]);
+	updateSocketsUsage(values[12],$socketsMax);
 	updateFileDescriptors(values[13]);
 	updatePipesUsage(values[14]);
-	updateCpuInterrupts(values[15]);
 }
 
 function updateMemory(x) {
@@ -770,6 +791,44 @@ function updateCPU(total, used) {
 	// Update the saved "last" values
 	lastTotal = total;
 	lastUsed = used;
+}
+
+function updateContextSwitches(total) {
+	if (lastContextSwitchTotal <= total) {
+		// Calculate the total ticks and the used ticks since the last time it was checked
+		var delta = total - lastContextSwitchTotal;
+
+		// get change per second
+		// divide by r3efresh rate
+		var x = Math.floor(delta / 10);
+
+		if ($('#context_switches')) {
+			$('[id="context_switches"]').html(x + " per second");
+		}
+
+	}
+
+	// Update the saved "last" values
+	lastContextSwitchTotal = total;
+}
+
+function updateCPUInterrupts(total) {
+	if (lastInterruptsTotal <= total) {
+		// Calculate the total ticks and the used ticks since the last time it was checked
+		var delta = total - lastInterruptsTotal;
+
+		// get change per second
+		// divide by r3efresh rate
+		var x = Math.floor(delta / 10);
+
+		if ($('#cpu_interrupts')) {
+			$('[id="cpu_interrupts"]').html(x + " per second");
+		}
+
+	}
+
+	// Update the saved "last" values
+	lastInterruptsTotal = total;
 }
 
 function updateTemp(x) {
@@ -843,12 +902,12 @@ function updateLoadAverage(x) {
 	}
 }
 
-function updateSocketsUsage(x) {
+function updateSocketsUsage(x,socketsMax) {
 	if ($('#sockets_usage')) {
 		$('[id="sockets_usage"]').html(x);
 	}
 	if ($('#socketsUsagePB')) {
-		setProgress('socketsUsagePB', parseInt(x));
+		setProgress('socketsUsagePB', parseInt(x/socketsMax));
 	}
 }
 
@@ -857,7 +916,7 @@ function updateFileDescriptors() {
 		$('[id="file_descriptors"]').html(x);
 	}
 	if ($('#fileDescriptorsPB')) {
-		setProgress('fileDescriptorsPB', parseInt(x/514059));
+		setProgress('fileDescriptorsPB', parseInt(x/$fileDescriptorsMax));
 	}
 }
 
@@ -866,15 +925,10 @@ function updatePipesUsage(x) {
 		$('[id="pipes_usage"]').html(x);
 	}
 	if ($('#pipesUsagePB')) {
-		setProgress('pipesUsagePB', parseInt(x));
+		setProgress('pipesUsagePB', parseInt(x/$pipesMax));
 	}
 }
 
-function updateCpuInterrupts(x) {
-	if ($('#cpu_interrupts')) {
-		$('[id="cpu_interrupts"]').html(x);
-	}
-}
 
 function widgetActive(x) {
 	var widget = $('#' + x + '-container');
@@ -916,7 +970,7 @@ events.push(function() {
 	metersObject.url = "/getstats.php";
 	metersObject.callback = meters_callback;
 	metersObject.parms = postdata;
-	metersObject.freq = 10;
+	metersObject.freq = 3;
 
 	// Register the AJAX object
 	register_ajax(metersObject);
