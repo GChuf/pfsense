@@ -1957,7 +1957,11 @@ events {
 http {
 	include       /usr/local/etc/nginx/mime.types;
 	default_type  application/octet-stream;
-	add_header X-Frame-Options SAMEORIGIN;
+	add_header X-Frame-Options "SAMEORIGIN";
+	add_header Referrer-Policy "no-referrer";
+	add_header X-Content-Type-Options "nosniff";
+	add_header X-XSS-Protection "1; mode=block";
+	add_header Access-Control-Allow-Origin "*";
 	server_tokens off;
 
 	sendfile        off;
@@ -1995,7 +1999,6 @@ EOD;
 		if ($captive_portal === false && $hsts !== false) {
 			$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";
 		}
-		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
 		$cert_temp = lookup_cert(config_get_path('system/webgui/ssl-certref'));
