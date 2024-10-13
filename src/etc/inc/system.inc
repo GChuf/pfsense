@@ -1958,7 +1958,6 @@ http {
 	include       /usr/local/etc/nginx/mime.types;
 	default_type  application/octet-stream;
 	add_header X-Frame-Options "SAMEORIGIN";
-	add_header Referrer-Policy "no-referrer";
 	add_header X-Content-Type-Options "nosniff";
 	add_header X-XSS-Protection "1; mode=block";
 	add_header Access-Control-Allow-Origin "*";
