@@ -27,7 +27,6 @@
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
-header("X-Frame-Options: SAMEORIGIN");
 include_once('phpsessionmanager.inc');
 include_once("util.inc");
 
