@@ -1957,10 +1957,6 @@ events {
 http {
 	include       /usr/local/etc/nginx/mime.types;
 	default_type  application/octet-stream;
-	add_header X-Frame-Options "SAMEORIGIN";
-	add_header X-Content-Type-Options "nosniff";
-	add_header X-XSS-Protection "1; mode=block";
-	add_header Access-Control-Allow-Origin "*";
 	server_tokens off;
 
 	sendfile        off;
@@ -2068,6 +2064,14 @@ EOD;
 			# Fix httpoxy - https://httpoxy.org/#fix-now
 			fastcgi_param  HTTP_PROXY  "";
 			fastcgi_read_timeout 180;
+			add_header Access-Control-Allow-Origin "*";
+			add_header Content-Security-Policy "default-src 'self' 'unsafe-inline' 'unsafe-eval'";
+			add_header Strict-Transport-Security "max-age=31536000";
+			add_header X-Content-Type-Options "nosniff";
+			add_header X-Frame-Options "SAMEORIGIN";
+			add_header X-XSS-Protection "1; mode=block";
+
+
 {$intercept_errors}
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
