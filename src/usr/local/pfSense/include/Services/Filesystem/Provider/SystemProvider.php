@@ -33,7 +33,6 @@ use Symfony\{
 };
 
 final class SystemProvider extends AbstractProvider {
-	private const DF_BINARY_PATH = '/bin/df';
 
 	public function getFilesystems() {
 		$roots = [];
