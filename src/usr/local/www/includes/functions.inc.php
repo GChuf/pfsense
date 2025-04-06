@@ -30,7 +30,7 @@ require_once("pfsense-utils.inc");
 function get_stats($sitems = array()) {
 	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
-	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? mem_usage() : '';
+	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? used_mem() : '';
 	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';
 	$stats['states'] = (!in_array('state_table_size', $sitems)) ? get_pfstate() : '';
 	$stats['temp'] = (!in_array('temperature', $sitems)) ? get_temp() : '';
@@ -191,23 +191,21 @@ function swap_usage() {
 	return $swap_used;
 }
 
-function mem_usage() {
-	$memUsage = "NA";
-	$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
-	if (is_numeric($totalMem) and ($totalMem > 0)) {
-		/* Include inactive and laundry with free memory since they
-		 * could be freed under pressure. */
-		$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");
-		$laundryMem = (int) get_single_sysctl("vm.stats.vm.v_laundry_count");
-		$freeMem = (int) get_single_sysctl("vm.stats.vm.v_free_count");
-		if (is_numeric($inactiveMem) &&
-		    is_numeric($laundryMem) &&
-		    is_numeric($freeMem)) {
-			$usedMem = $totalMem - ($inactiveMem + $laundryMem + $freeMem);
-			$memUsage = round(($usedMem * 100) / $totalMem, 0);
-		}
+function used_mem() {
+	$usedMem = "NA";
+	//$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
+	/* Include inactive and laundry with free memory since they
+		* could be freed under pressure. */
+	$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");
+	$laundryMem = (int) get_single_sysctl("vm.stats.vm.v_laundry_count");
+	$freeMem = (int) get_single_sysctl("vm.stats.vm.v_free_count");
+	if (is_numeric($inactiveMem) &&
+		is_numeric($laundryMem) &&
+		is_numeric($freeMem)) {
+		$usedMem = $inactiveMem + $laundryMem + $freeMem;
 	}
-	return $memUsage;
+	
+	return $usedMem * 4096 / 1024 / 1024;
 }
 
 function update_date_time() {

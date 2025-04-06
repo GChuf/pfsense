@@ -58,6 +58,7 @@ $sysinfo_items = array(
 // Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-rotate fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
+$totalMem = sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024));
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -505,13 +506,13 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Memory usage");?></th>
 			<td>
-				<?php $memUsage = mem_usage(); ?>
+				<?php $usedMem = used_mem(); ?>
 
 				<div class="progress" >
 					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
+				<span id="memusagemeter">10</span><span>% of <?=$usedMem?> / <?=$totalMem?> MiB</span>
 			</td>
 		</tr>
 <?php
