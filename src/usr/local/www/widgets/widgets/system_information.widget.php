@@ -60,7 +60,7 @@ $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
 
 $totalMem = get_single_sysctl("hw.physmem") / 1024 / 1024;
-$virtualMem = get_single_sysctl("vm.stats.vm.v_page_count") * 4096 / 1024 / 1024;
+
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -508,13 +508,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("Memory usage");?></th>
 			<td>
-				<?php $usedMem = used_mem(); ?>
-
 				<div class="progress" >
-					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
+					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span><?=$usedMem / $totalMem?></span><span>%  (</span><span id="memusagemeter"><?=$usedMem?><span><span> / <?=$totalMem?> MiB)</span>
+				<span id="memusagePB"></span><span id="memusagemeter"></span>
 			</td>
 		</tr>
 <?php
@@ -644,14 +642,21 @@ function stats(x) {
 	updateStateMeter(values[11]);
 }
 
-function updateMemory(x) {
+function updateMemory(freeVirtualMemory) {
+
+	// Convert to percent
+	var totalMem = Math.floor(<?=$totalMem?>);
+	var usedMemory = Math.floor(totalMem - freeVirtualMemory);
+	var percentUsedMem = Math.floor((usedMemory / totalMem) * 100);
+
 	if ($('#memusagemeter')) {
-		$('[id="memusagemeter"]').html(x);
+		$('[id="memusagemeter"]').html(percentUsedMem + '% (' + usedMemory + "/" + totalMem + " MiB)");
 	}
 	if ($('#memUsagePB')) {
-		setProgress('memUsagePB', parseInt(x));
+		setProgress('memUsagePB', parseInt(percentUsedMem));
 	}
 }
+
 
 function updateMbuf(x) {
 	if ($('#mbuf')) {
