@@ -58,7 +58,9 @@ $sysinfo_items = array(
 // Declared here so that JavaScript can access it
 $updtext = sprintf(gettext("Obtaining update status %s"), "<i class='fa-solid fa-rotate fa-spin'></i>");
 $state_tt = gettext("Adaptive state handling is enabled, state timeouts are reduced by ");
-$totalMem = sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024));
+
+$totalMem = get_single_sysctl("hw.physmem") / 1024 / 1024;
+$virtualMem = get_single_sysctl("vm.stats.vm.v_page_count") * 4096 / 1024 / 1024;
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -512,7 +514,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span id="memusagemeter">10</span><span>% of <?=$usedMem?> / <?=$totalMem?> MiB</span>
+				<span><?=$usedMem / $totalMem?></span><span>%  (</span><span id="memusagemeter"><?=$usedMem?><span><span> / <?=$totalMem?> MiB)</span>
 			</td>
 		</tr>
 <?php

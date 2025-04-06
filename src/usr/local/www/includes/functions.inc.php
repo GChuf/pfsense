@@ -193,7 +193,6 @@ function swap_usage() {
 
 function used_mem() {
 	$usedMem = "NA";
-	//$totalMem = (int) get_single_sysctl("vm.stats.vm.v_page_count");
 	/* Include inactive and laundry with free memory since they
 		* could be freed under pressure. */
 	$inactiveMem = (int) get_single_sysctl("vm.stats.vm.v_inactive_count");
@@ -202,9 +201,9 @@ function used_mem() {
 	if (is_numeric($inactiveMem) &&
 		is_numeric($laundryMem) &&
 		is_numeric($freeMem)) {
-		$usedMem = $inactiveMem + $laundryMem + $freeMem;
+		$usedMem = $freeMem - $inactiveMem - $laundryMem;
 	}
-	
+
 	return $usedMem * 4096 / 1024 / 1024;
 }
 
