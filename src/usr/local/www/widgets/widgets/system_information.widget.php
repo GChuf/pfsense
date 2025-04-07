@@ -409,32 +409,11 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
 
-		//$pfstate = get_pfstate();
-		//$pfstate = 10000000000000;
-
-		//$pfstateusage = get_pfstate(true);
-
-		// Calculate scaling factor
-		//$adaptive = false;
-		//$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
-
-		//$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
-		//$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
-		//$adaptive_text = "";
-
-		//if ($pfstate > $adaptivestart) {
-		//    $scalingfactor = round(($adaptiveend - $pfstate) / ($adaptiveend - $adaptivestart) * 100, 0);
-		//    $adaptive = true;
-		//}
 ?>
 		<tr>
 		<th><?=gettext("State table size");?><span id="scaledstates"></th>
 			<td>
-				<!-- The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use -->
-				<div class="progress">
-					<div id="statePB"></div>
-				</div>
-
+				<div class="progress"><div id="statePB"></div></div>
 				<span id="pfstateusagemeter"><?=$pfstateusage?></span>% (<span id="pfstate">></span><span>/<?= htmlspecialchars($maxstates)?>)&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
@@ -744,6 +723,7 @@ function updateState(x) {
 				$('[data-toggle="tooltip"]').tooltip()
 			})
 
+			// The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use
 			$('#statePB').addClass('progress-bar-warning');
 		} else {
 			$('#scaledstates').html('');
