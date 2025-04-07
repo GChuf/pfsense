@@ -440,19 +440,18 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('temperature', $skipsysinfoitems)):
 		$rows_displayed = true;
 ?>
-		<?php if ($temp_deg_c = get_temp()): ?>
+
 		<tr>
 			<th><?=gettext("Temperature");?></th>
 			<td>
-				<?php $display_temp = ($temp_use_f) ? $temp_deg_c * 1.8 + 32 : $temp_deg_c; ?>
 				<div class="progress">
-					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$display_temp?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_use_f ? $temp_deg_c * .212 : $temp_deg_c?>%">
+					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="tempmeter" data-units="<?=$temp_use_f ? 'F' : 'C';?>"><?=$display_temp?></span>&deg;<?=$temp_use_f ? 'F' : 'C';?>
+				<span id="tempmeter"></span>&deg;<?=$temp_use_f ? 'F' : 'C';?>
 			</td>
 		</tr>
-		<?php endif; ?>
+
 <?php
 	endif;
 	if (!in_array('load_average', $skipsysinfoitems)):
