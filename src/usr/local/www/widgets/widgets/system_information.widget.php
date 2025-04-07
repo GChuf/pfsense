@@ -428,16 +428,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		}
 ?>
 		<tr>
-			<th>
-<?php
-				print(gettext("State table size"));
-				// If adaptive state handling is enabled, display the % and provide a tooltip with more details
-				print('<span id="scaledstates"><br /><a href="#" data-toggle="tooltip" title="" data-placement="right" data-original-title="' .
-					$state_tt . $scalingfactor . '%">' .
-					gettext("Scaling ") . $scalingfactor . '%</a></span>');
-
-?>
-			</th>
+		<th><?=gettext("State table size");?><span id="scaledstates"></th>
 			<td>
 				<!-- The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use -->
 				<div class="progress">
@@ -619,6 +610,8 @@ var adaptivestart = 0;
 var maxstates = 0;
 var state_tt = "";
 <?php endif; ?>
+
+
 
 function setProgress(barName, percent) {
 	$('[id="' + barName + '"]').css('width', percent + '%').attr('aria-valuenow', percent);
