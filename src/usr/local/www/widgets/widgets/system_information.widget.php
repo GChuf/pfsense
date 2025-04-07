@@ -69,6 +69,10 @@ $maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path(
 $adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
 $adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
 
+// use the preference of the first thermal sensor widget, if it's available (false == empty)
+$tempF = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($user_settings['widgets']['thermal_sensors-0']['thermal_sensors_widget_show_fahrenheit']));
+
+
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
@@ -166,8 +170,7 @@ $hwcrypto = get_cpu_crypto_support();
 $skipsysinfoitems = explode(",", $user_settings['widgets'][$widgetkey]['filter']);
 
 $rows_displayed = false;
-// use the preference of the first thermal sensor widget, if it's available (false == empty)
-$temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($user_settings['widgets']['thermal_sensors-0']['thermal_sensors_widget_show_fahrenheit']));
+
 ?>
 
 <div class="table-responsive">
@@ -448,7 +451,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="tempmeter"></span>&deg;<?=$temp_use_f ? 'F' : 'C';?>
+				<span id="tempmeter">0</span>&deg;<?=$tempF ? 'F' : 'C';?>
 			</td>
 		</tr>
 
@@ -682,9 +685,10 @@ function updateCPU(total, used) {
 
 function updateTemp(x) {
 	$("#tempmeter").html(function() {
-		return this.dataset.units === "F" ? parseInt(x * 1.8 + 32, 10) : x;
+		var tempF = <?= json_encode($tempF) ?>;
+		return tempF ? parseInt(x * 1.8 + 32, 10) : x;
 	});
-	setProgress('tempPB', parseInt(x));
+	setProgress('tempPB', x);
 }
 
 function updateDateTime(x) {
