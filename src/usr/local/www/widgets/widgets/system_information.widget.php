@@ -61,6 +61,9 @@ $state_tt = gettext("Adaptive state handling is enabled, state timeouts are redu
 
 $totalMem = get_single_sysctl("hw.physmem") / 1024 / 1024;
 
+$cpufreqs = explode(" ", get_single_sysctl('dev.cpu.0.freq_levels'));
+$maxCpuFreq = explode("/", $cpufreqs[0]);
+$maxCpuFreq = $maxCpuFreq[0];
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -298,7 +301,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
-				<div id="cpufreq"><?= get_cpufreq(); ?></div>
+				<div><span>Current: </span><span id="cpufreq"></span><span> MHz, Max: <?=$maxCpuFreq?> MHz</span></div>
 		<?php
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>

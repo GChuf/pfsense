@@ -213,17 +213,9 @@ function update_date_time() {
 }
 
 function get_cpufreq() {
-	$cpufreqs = "";
-	$out = "";
-	$cpufreqs = explode(" ", get_single_sysctl('dev.cpu.0.freq_levels'));
-	$maxfreq = explode("/", $cpufreqs[0]);
-	$maxfreq = $maxfreq[0];
 	$curfreq = "";
 	$curfreq = get_single_sysctl('dev.cpu.0.freq');
-	if (($curfreq > 0) && ($curfreq != $maxfreq)) {
-		$out = "Current: {$curfreq} MHz, Max: {$maxfreq} MHz";
-	}
-	return $out;
+	return $curfreq;
 }
 
 define("INTEL_C2000_IQIA_PHYS", "0x1f188086");
