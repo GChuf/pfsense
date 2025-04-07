@@ -415,25 +415,24 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 		//$pfstateusage = get_pfstate(true);
 
 		// Calculate scaling factor
-		$adaptive = false;
+		//$adaptive = false;
 		//$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 
 		//$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
 		//$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
-		$adaptive_text = "";
+		//$adaptive_text = "";
 
-		if ($pfstate > $adaptivestart) {
-		    $scalingfactor = round(($adaptiveend - $pfstate) / ($adaptiveend - $adaptivestart) * 100, 0);
-		    $adaptive = true;
-		}
+		//if ($pfstate > $adaptivestart) {
+		//    $scalingfactor = round(($adaptiveend - $pfstate) / ($adaptiveend - $adaptivestart) * 100, 0);
+		//    $adaptive = true;
+		//}
 ?>
 		<tr>
 		<th><?=gettext("State table size");?><span id="scaledstates"></th>
 			<td>
 				<!-- The color of the progress bar is changed to 'warning' to indicate adaptive state handling is in use -->
 				<div class="progress">
-					<div id="statePB" class="progress-bar progress-bar-striped <?=$adaptive ? 'progress-bar-warning' : ''?>" role="progressbar" aria-valuenow="<?=$pfstateusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$pfstateusage?>%">
-					</div>
+					<div id="statePB"></div>
 				</div>
 
 				<span id="pfstateusagemeter"><?=$pfstateusage?></span>% (<span id="pfstate">></span><span>/<?= htmlspecialchars($maxstates)?>)&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
