@@ -417,7 +417,7 @@ $rows_displayed = false;
 		<th><?=gettext("State table size");?><span id="scaledstates"></th>
 			<td>
 				<div class="progress"><div id="statePB"></div></div>
-				<span id="pfstateusagemeter"><?=$pfstateusage?></span>% (<span id="pfstate">></span><span>/<?= htmlspecialchars($maxstates)?>)&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
+				<span id="pfstateusagemeter">0</span>% (<span id="pfstate"></span><span>/<?= htmlspecialchars($maxstates)?>)&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
 <?php
@@ -463,7 +463,7 @@ $rows_displayed = false;
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
-				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
+				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"></div>
 			</td>
 		</tr>
 <?php
