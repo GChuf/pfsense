@@ -65,6 +65,10 @@ $cpufreqs = explode(" ", get_single_sysctl('dev.cpu.0.freq_levels'));
 $maxCpuFreq = explode("/", $cpufreqs[0]);
 $maxCpuFreq = $maxCpuFreq[0];
 
+$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
+$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
+
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
@@ -405,18 +409,21 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 	if (!in_array('state_table_size', $skipsysinfoitems)):
 		$rows_displayed = true;
 
-		$pfstatetext = get_pfstate();
-		$pfstateusage = get_pfstate(true);
+		//$pfstate = get_pfstate();
+		//$pfstate = 10000000000000;
+
+		//$pfstateusage = get_pfstate(true);
 
 		// Calculate scaling factor
 		$adaptive = false;
-		$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
-		$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
-		$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
+		//$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+
+		//$adaptivestart = (config_get_path('system/adaptivestart', 0) > 0) ? config_get_path('system/adaptivestart') : intval($maxstates * 0.6);
+		//$adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path('system/adaptiveend') : intval($maxstates * 1.2);
 		$adaptive_text = "";
 
-		if ($pfstatetext > $adaptivestart) {
-		    $scalingfactor = round(($adaptiveend - $pfstatetext) / ($adaptiveend - $adaptivestart) * 100, 0);
+		if ($pfstate > $adaptivestart) {
+		    $scalingfactor = round(($adaptiveend - $pfstate) / ($adaptiveend - $adaptivestart) * 100, 0);
 		    $adaptive = true;
 		}
 ?>
@@ -438,7 +445,7 @@ $temp_use_f = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($
 					</div>
 				</div>
 
-				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
+				<span id="pfstateusagemeter"><?=$pfstateusage?></span>% (<span id="pfstate">></span><span>/<?= htmlspecialchars($maxstates)?>)&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
 <?php
@@ -642,7 +649,6 @@ function stats(x) {
 	updateLoadAverage(values[8]);
 	updateMbuf(values[9]);
 	updateMbufMeter(values[10]);
-	updateStateMeter(values[11]);
 }
 
 function updateMemory(freeVirtualMemory) {
@@ -725,10 +731,10 @@ function updateUptime(x) {
 
 function updateState(x) {
 	if ($('#pfstate')) {
-		$('[id="pfstate"]').html('(' + x + ')');
+		$('[id="pfstate"]').html(x);
 
 		// get numeric part of string before the '/'
-		x = x.split('/')[0]
+		//x = x.split('/')[0]
 
 		if (x > adaptivestart) {
 			var scalingfactor = Math.round((adaptiveend - x) / (adaptiveend - adaptivestart) * 100);
@@ -752,16 +758,18 @@ function updateState(x) {
 			$('#statePB').removeClass('progress-bar-warning');
 		}
 	}
-}
 
-function updateStateMeter(x) {
 	if ($('#pfstateusagemeter')) {
-		$('[id="pfstateusagemeter"]').html(x + '%');
+		var maxStates = <?=$maxstates?>;
+		var percentStates = Math.floor(x/maxStates);
+		$('[id="pfstateusagemeter"]').html(percentStates);
 	}
 	if ($('#statePB')) {
-		setProgress('statePB', parseInt(x));
+		setProgress('statePB', parseInt(percentStates));
 	}
+
 }
+
 
 function updateCpuFreq(x) {
 	if ($('#cpufreq')) {

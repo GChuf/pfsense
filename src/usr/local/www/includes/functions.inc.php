@@ -43,7 +43,6 @@ function get_stats($sitems = array()) {
 		$stats['mbuf'] = '';
 		$stats['mbufpercent'] = '';
 	}
-	$stats['statepercent'] = (!in_array('state_table_size', $sitems)) ? get_pfstate(true) : '';
 	$stats = join("|", $stats);
 	return $stats;
 }
@@ -95,9 +94,9 @@ function cpu_usage() {
 	return array_sum($cpuTicks) . "|" . $cpuTicks['idle'];
 }
 
-function get_pfstate($percent=false) {
+function get_pfstate() {
 	$matches = "";
-	$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
+	//$maxstates = (config_get_path('system/maximumstates', 0) > 0) ? config_get_path('system/maximumstates') : pfsense_default_state_size();
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 		$curentries = $matches[1];
@@ -105,15 +104,8 @@ function get_pfstate($percent=false) {
 	if (!is_numeric($curentries)) {
 		$curentries = 0;
 	}
-	if ($percent) {
-		if (intval($maxstates) > 0) {
-			return round(($curentries / $maxstates) * 100, 0);
-		} else {
-			return "NA";
-		}
-	} else {
-		return $curentries . "/" . $maxstates;
-	}
+
+	return $curentries;
 }
 
 function has_temp() {
