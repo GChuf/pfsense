@@ -375,7 +375,7 @@ $rows_displayed = false;
 ?>
 		<tr>
 			<th><?=gettext("Current date/time");?></th>
-			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
+			<td><div id="datetime"></div></td>
 		</tr>
 <?php
 	endif;
