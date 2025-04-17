@@ -1885,20 +1885,6 @@ function get_cpu_speed() {
 	return get_single_sysctl("hw.clockrate");
 }
 
-function get_uptime_sec() {
-	$boottime = "";
-	$matches = "";
-	$boottime = get_single_sysctl("kern.boottime");
-	preg_match("/sec = (\d+)/", $boottime, $matches);
-	$boottime = $matches[1];
-	if (intval($boottime) == 0) {
-		return 0;
-	}
-
-	$uptime = time() - $boottime;
-	return $uptime;
-}
-
 function resolve_host_addresses($host, $recordtypes = array(DNS_A, DNS_AAAA, DNS_CNAME), $index = true) {
 	$dnsresult = array();
 	$resolved = array();

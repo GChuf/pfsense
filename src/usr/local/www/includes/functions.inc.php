@@ -31,7 +31,7 @@ function get_stats($sitems = array()) {
 	$sitems = is_array($sitems) ? $sitems : [];
 	$stats['cpu'] = (!in_array('cpu_usage', $sitems)) ? cpu_usage() : '|';
 	$stats['mem'] = (!in_array('memory_usage', $sitems)) ? free_mem() : '';
-	$stats['uptime'] = (!in_array('uptime', $sitems)) ? get_uptime() : '';
+	$stats['uptime'] = (!in_array('uptime', $sitems)) ? time() : '';
 	$stats['states'] = (!in_array('state_table_size', $sitems)) ? get_pfstate() : '';
 	$stats['temp'] = (!in_array('temperature', $sitems)) ? get_temp() : '';
 	$stats['datetime'] = (!in_array('current_datetime', $sitems)) ? update_date_time() : '';
@@ -45,44 +45,6 @@ function get_stats($sitems = array()) {
 	}
 	$stats = join("|", $stats);
 	return $stats;
-}
-
-function get_uptime() {
-	$uptime = get_uptime_sec();
-
-	if (intval($uptime) == 0) {
-		return;
-	}
-
-	$updays = (int)($uptime / 86400);
-	$uptime %= 86400;
-	$uphours = (int)($uptime / 3600);
-	$uptime %= 3600;
-	$upmins = (int)($uptime / 60);
-	$uptime %= 60;
-	$upsecs = (int)($uptime);
-
-	$uptimestr = "";
-	if ($updays > 1) {
-		$uptimestr .= "$updays Days ";
-	} else if ($updays > 0) {
-		$uptimestr .= "1 Day ";
-	}
-
-	if ($uphours > 1) {
-		$hours = "s";
-	}
-
-	if ($upmins > 1) {
-		$minutes = "s";
-	}
-
-	if ($upsecs > 1) {
-		$seconds = "s";
-	}
-
-	$uptimestr .= sprintf("%02d Hour$hours %02d Minute$minutes %02d Second$seconds", $uphours, $upmins, $upsecs);
-	return $uptimestr;
 }
 
 // Returns the current total ticks and user ticks. The dashboard widget calculates the load from that

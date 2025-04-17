@@ -72,6 +72,10 @@ $adaptiveend = (config_get_path('system/adaptiveend', 0) > 0) ? config_get_path(
 // use the preference of the first thermal sensor widget, if it's available (false == empty)
 $tempF = (isset($user_settings['widgets']['thermal_sensors-0']) && !empty($user_settings['widgets']['thermal_sensors-0']['thermal_sensors_widget_show_fahrenheit']));
 
+$boottime = get_single_sysctl("kern.boottime");
+preg_match("/sec = (\d+)/", $boottime, $matches);
+$boottime = $matches[1];
+
 
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
@@ -362,7 +366,7 @@ $rows_displayed = false;
 ?>
 		<tr>
 			<th><?=gettext("Uptime");?></th>
-			<td id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
+			<td id="uptime"></td>
 		</tr>
 <?php
 	endif;
@@ -695,9 +699,39 @@ function updateDateTime(x) {
 	}
 }
 
-function updateUptime(x) {
+function updateUptime(time) {
+
+	var boottime = <?=$boottime?>;
+
+	let uptime = time - boottime;
+
+	let updays = Math.floor(uptime / 86400);
+	uptime %= 86400;
+
+	let uphours = Math.floor(uptime / 3600);
+	uptime %= 3600;
+
+	let upmins = Math.floor(uptime / 60);
+	let upsecs = uptime % 60;
+
+	let uptimestr = "";
+
+	if (updays > 1) {
+		uptimestr += `${updays} Days `;
+	} else if (updays === 1) {
+		uptimestr += "1 Day ";
+	}
+
+	let hours = (uphours !== 1) ? "s" : "";
+	let minutes = (upmins !== 1) ? "s" : "";
+	let seconds = (upsecs !== 1) ? "s" : "";
+
+	uptimestr += `${String(uphours).padStart(2, "0")} Hour${hours} `;
+	uptimestr += `${String(upmins).padStart(2, "0")} Minute${minutes} `;
+	uptimestr += `${String(upsecs).padStart(2, "0")} Second${seconds}`;
+
 	if ($('#uptime')) {
-		$('[id="uptime"]').html(x);
+		$('[id="uptime"]').html(uptimestr);
 	}
 }
 
