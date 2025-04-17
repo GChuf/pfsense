@@ -121,16 +121,13 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		printf('<span class="text-success">%s</span>' . "\n",
-		    gettext("The system is on the latest version."));
+		printf('<span class="text-success">%s</span>' . "\n", gettext("The system is on the latest version."));
 		break;
 	case '>':
-		printf("%s\n", gettext(
-		    "The system is on a later version than official release."));
+		printf("%s\n", gettext("The system is on a later version than official release."));
 		break;
 	default:
-		printf("<i>%s</i>\n", gettext(
-		    "Error comparing installed with latest version available"));
+		printf("<i>%s</i>\n", gettext("Error comparing installed with latest version available"));
 		break;
 	}
 
@@ -575,8 +572,13 @@ $rows_displayed = false;
 //<![CDATA[
 <?php if ($widget_first_instance): ?>
 
-var lastTotal = 0;
-var lastUsed = 0;
+<?php
+$cpuValues = cpu_usage();
+list($totalTicks, $idleTicks) = explode("|", $cpuValues);
+?>
+
+var lastTotal = <?=$totalTicks?>;
+var lastUsed = <?=$idleTicks?>;
 
 // Collect some PHP values required by the states calculation
 <?php if (!in_array('state_table_size', $skipsysinfoitems)): ?>
@@ -606,13 +608,8 @@ function stats(x) {
 			return false;
 	}))
 
-	if (lastTotal === 0) {
-		lastTotal = values[0];
-		lastUsed = values[1];
-	} else {
-		updateCPU(values[0], values[1]);
-	}
 
+	updateCPU(values[0], values[1]);
 	updateUptime(values[3]);
 	updateDateTime(values[6]);
 	updateMemory(values[2]);
@@ -656,6 +653,7 @@ function updateMbufMeter(x) {
 }
 
 function updateCPU(total, used) {
+
 	if ((lastTotal <= total) && (lastUsed <= used)) { // Just in case it wraps
 		// Calculate the total ticks and the used ticks since the last time it was checked
 		var d_total = total - lastTotal;
