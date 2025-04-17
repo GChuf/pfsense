@@ -88,10 +88,9 @@ function get_uptime() {
 // Returns the current total ticks and user ticks. The dashboard widget calculates the load from that
 function cpu_usage() {
 
-	$diff = array('user', 'nice', 'sys', 'intr', 'idle');
-	$cpuTicks = array_combine($diff, explode(" ", get_single_sysctl('kern.cp_time')));
-
-	return array_sum($cpuTicks) . "|" . $cpuTicks['idle'];
+	// 'user', 'nice', 'sys', 'intr', 'idle';
+	$cpuTicks = explode(" ", get_single_sysctl('kern.cp_time'));
+	return array_sum($cpuTicks) . "|" . $cpuTicks[4];
 }
 
 function get_pfstate() {
